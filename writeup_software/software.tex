@@ -1,7 +1,8 @@
 \documentclass[useAMS,usenatbib]{mn2e}
 \usepackage{footnote,graphicx,natbib,color,multirow,amsmath,url,amssymb,tabularx,hyperref,amssymb}
+\usepackage{aas_macros}
 
-\hypersetup{
+\hypersetup{draft,
     colorlinks,
     citecolor=blue,
     filecolor=black,
@@ -11,6 +12,8 @@
 
 \def\lesssim{\mathrel{\hbox{\rlap{\hbox{\lower3pt\hbox{$\sim$}}}\hbox{\raise2pt\hbox{$<$}}}}}
 
+\definecolor{check}{rgb}{1,0,0}
+\def\check		{\color{check}}
 
 \begin{document}
 
@@ -23,6 +26,7 @@
 \maketitle
 
 \begin{abstract}
+We present \textsc{starpies}, an open source code writte in \emph{Python}, developed to infer a simple toy model of star formation history of a galaxy spectrum from the emission and absorption  features. \textsc{starpies} utilises FSPS, the MaNGA DAP and \emph{emcee} in order to provide the inferred $[Z, t_q, \tau]$ parameters with which to describe the exponentially declining quenching history of the input spectral features. This code was written for use on the MaNGA spectral data cubes but can be used for any scenario where a spectrum has been obtained, or spectral feature measurements have been provided. 
 \end{abstract}
 
 \begin{keywords}
@@ -30,7 +34,33 @@ software -- description
 \end{keywords}
 
 \section{Introduction}
-\section{Description of Code}
+
+Whilst there are many codes which provide a full spectral fit to a galaxy spectrum in order to determine its SFH, there are few providing a simpler, quicker inference of a toy model of star formation history (SFH). 
+
+Here we present an open source \emph{Python} software which can infer a simple toy model of SFH from the absorption and emission features of a galaxy (or IFU) spectrum. 
+
+We describe our SFH model (Section~\ref{sec:sfh}) and our code, \textsc{starpies} through generation (Section~\ref{sec:fsps}) and spectral fit of synthetic spectra (Section~\ref{sec:dap}), using a Markov Chain Monte Carlo method (Section~\ref{sec:emcee}) and pruning methods (Section~\ref{sec:pruning}) outputs `best fit' parameters to describe the SFH in Section~\ref{sec:output}. We also describe the rigorous testing procedures applied to \textsc{starpies} in Section~\ref{sec:test}.   
+
+\section{Description of Code}\label{sec:code}
+
+\subsection{Star Formation History Model}\label{sec:sfh}
+
+The SFH used in this code was first described in \cite{smethurst15}. We have reproduced its descroption here. The quenched star formation history of a galaxy can be simply modelled as an exponentially declining star formation rate (SFR) across cosmic time as:
+\begin{equation}\label{sfh}
+SFR =
+\begin{cases}
+I_{sfr}(t_q) & \text{if } t \leq t_q \\
+I_{sfr}(t_q) \times exp{\left( \frac{-(t-t_{q})}{\tau}\right)} & \text{if } t > t_q 
+\end{cases}
+\end{equation}
+where $t_{q}$ is the onset time of quenching, $\tau$ is the timescale over which the quenching occurs and $I_{sfr}$ is an initial constant star formation rate dependent on $t_q$.  A smaller $\tau$ value corresponds to a rapid quench, whereas a larger $\tau$ value corresponds to a slower quench. This model is clearly not a fully hydrodynamical simulation, it is a deliberately simple model built in order to test our understanding of the evolution of galaxy populations. This SFH model has previously been shown to appropriately characterise quenching galaxies \citep{weiner06, martin07, noeske07,schawinski14}. For galaxies which are still star forming, this model results in a constant SFR.
+
+Here, I assume that all galaxies formed at a time $t=0~\rm{Gyr}$ with an initial burst of star formation, $I_{sfr}(t_q)$. This initial constant star formation rate must be defined in order to ensure the `model' galaxy  has a reasonable stellar mass by $z\sim0$. This value will be dependent on the epoch at which quenching is modelled to occur, hence the dependence of this initial star formation rate on quenching time in Equation~\ref{sfh}. To tackle this problem, I looked to the literature; \citet[][Equation 1]{peng10} define a relation between the average specific SFR ($\rm{sSFR}=SFR/M_*$) and redshift by fitting to measurements of the mean sSFR of blue star forming galaxies from SDSS, zCOSMOS and literature values from \cite{elbaz07} and \cite{daddi07} measured at increasing redshifts with data from the GOODS survey:
+\begin{equation}\label{eq:peng}
+sSFR(m,t) = 2.5 \left( \frac{m}{10^{10} M_{\odot}} \right)^{-0.1} \left(\frac{t}{3.5 ~\rm{Gyr}}\right)^{-2.2} \rm{Gyr}^{-1}.
+\end{equation}
+Beyond $z \sim 2$ the characteristic SFR flattens and is roughly constant back to $z\sim6$. This flattening can be seen across similar observational data \citep{peng10, gonzalez10, bethermin12}; the cause is poorly understood but may reflect a physical limit to the sSFR of a galaxy. 
+
 
 \begin{figure*}
 \centering
@@ -39,6 +69,18 @@ software -- description
 \label{fig:spectrafit}
 \end{figure*}
 
+Motivated by these observations, the relation defined in \citet{peng10} is taken up to a cosmic time of $t=3~\rm{Gyr}$ ($z \sim 2.3$) and prior to this the value of the sSFR at $t=3~\rm{Gyr}$ is used. At the point of quenching, $t_{q}$, the SFH models are therefore defined to have an $I_{sfr}(t_q)$ which lies on this relationship for the sSFR, for a galaxy with mass, $m = 10^{10.27} M_{\odot}$. This choice of $I_{sfr}(t_q)$ is an important one, however does not impact on the predicted spectral features output by the model as it is merely a normalisation factor on the SFH. $[t_q, \tau]$, which set the shape of the SFH, and $Z$ which can affect the strength of a spectral feature are the crucial parameters.
+
+\subsection{Synthetic spectra generation}\label{sec:fsps}
+
+
+We then employ stellar population synthesis models (SPS) in order to construct synthetic spectra with known SFHs as defined in Section~\ref{sec:sfh}. 
+
+
+\subsection{Measuring the synthetic spectral features}\label{sec:dap}
+
+\subsection{Choosing which spectral features to use}
+
 \begin{figure*}
 \centering
 \includegraphics[width=\textwidth]{../figures/fsps_mangadap_D4000_MgFe_hbeta_hdeltaA_EWs_halpha_OII_one_t_one_Z.png}
@@ -46,7 +88,30 @@ software -- description
 \label{fig:rainbow}
 \end{figure*}
 
-\section{Output of Code}
+\subsection{Markov Chain Monte Carlo Methods}\label{sec:emcee}
+
+
+\subsection{Pruning}\label{sec:pruning}
+
+After running \textsc{starpies} and upon inspection of the walker positions it became apparent that the walkers of \emph{emcee} would often get stuck in local minima. We therefore implemented a pruning method, as described in \cite{hou12}, in order to remove those walkers in local minima leaving only the global minima from which to derive inferred SFH parameters. The method outlined in \cite{hou12} is a simple one dimensional clustering method wherein the average negative log-likelihood for each walker is collected. This results in $L$ numbers:
+\begin{equation}
+\overline{l}_k = \frac{1}{T} \sum^{T}_{t=1} l(\vec{\theta}_k(t)|D),
+\end{equation}
+where T is the total number of steps each walker, $k$, takes. These $L$ numbers, $\overline{l}_k$ are therefore characteristic of the well which walker $k$ is in, so that walkers in the same well will have similar $\overline{l}_k$ (see Figure~\ref{fig:localminima} in which walkers are coloured by their characteristic $\overline{l}_{(k)}$ value). 
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.495\textwidth]{../figures/pruning_features.png}
+\caption{This figure shows the walker positions marginalized over the $Z$ dimension into the two dimensional model $[t_q, \tau]$ space and coloured by their log probability value. The higher the value of their log probability, the more likely the model is. The lower values of log probability for some groups of walkers suggests that these are indeed stuck in local minima. These clusters of walkers in local minima can be `pruned' (see Section~\ref{sec:pruning}) away to leave only the global minimum in the final output.}
+\label{fig:localminima}
+\end{figure}
+
+The walkers are all then ranked in order of decreasing average log likelihood, $\overline{l}_{(k)}$, or increasing $- \log \overline{l}_{(k)}$. If there are big jumps in the $- \log \overline{l}_{(k)}$, these are easy to spot and are indicative of areas where walkers have got stuck in local minima.The difference in $- \log \overline{l}_{(k)}$ for every adjacent pair of walkers is then calculated. The first pair whose difference is a certain amount times bigger than the average difference previously is then identified like so:
+\begin{equation}
+-\log \overline{l}_{(j+1)} + \log \overline{l}_{(j)} > Const − \frac{\log \overline{l}_{(j)} + log \overline{l}_{(1)}}{j - 1}.
+\end{equation}
+All the walkers with with $k>j$ are thrown away and only the ones with $k \leq j$ are kept after being identified as part of the global minimum. This can be seen in Figure~\ref{fig:comparepruning} wherein the walker positions at each step before pruning in the burn-in phase are shown in comparison to those after pruning in the main run stage.
 
 \begin{figure*}
 \centering
@@ -56,12 +121,8 @@ software -- description
 \label{fig:comparepruning}
 \end{figure*}
 
-\begin{figure}
-\centering
-\includegraphics[width=0.495\textwidth]{../figures/pruning_features.png}
-\caption{This figure shows the walker positions marginalized over the $Z$ dimension into the two dimensional model $[t_q, \tau]$ space and coloured by their log probability value. The higher the value of their log probability, the more likely the model is. The lower values of log probability for some groups of walkers suggests that these are indeed stuck in local minima. These clusters of walkers in local minima can be `pruned' (see Section~\ref{sec:pruning}) away to leave only the global minimum in the final output.}
-\label{fig:localminima}
-\end{figure}
+
+\section{Output of Code}\label{sec:output}
 
 
 \begin{figure*}
@@ -71,7 +132,28 @@ software -- description
 \label{fig:output}
 \end{figure*}
 
-\section{Testing}
+
+\section{Testing}\label{sec:test}
+
+\subsection{Testing precision}
+
+In order to test that \textsc{starpies} can find the correct quenched SFH model for a given set of spectral features, 25 synthesised galaxy spectra were created with known SFHs (i.e. known values of $\theta = [Z, t_q, \tau]$) from which spectral features were generated using the FSPS models (see Section~\ref{sec:fsps}. These were input into \textsc{starpies} to test whether the known values of $\theta$ were reproduced, within error, for each of the 25 synthesised galaxies. Figure~\ref{fig:test_mosaic} shows the results for each of these synthesised galaxies, with the known values of $\theta$ shown by the red lines. In only one case for the $\tau$ parameter this red line does not fall within the 16th and 84th percentile values shown by the blue dashed lines (see bottom right panel). However, on inspection, this SFH was a constant SFR that had not yet quenched and so the posterior probability function returned for the $\tau$ parameter is very broad as \textsc{starpies} does not have any information with which to constrain this parameter. In all cases the intersection of the red lines (i.e. the known or true values input) resides within the parameter space explored by the walkers left over after pruning, which trace the global minimum of the posterior probability. Therefore \textsc{starpies} succeeds in precisely locating the true parameter values within the degeneracies of the SFH model for known values. 
+
+\begin{figure*}
+\centering
+\includegraphics[width=\textwidth]{../code/test_log/mosaic_spec_starpy_test_0-874128238232_log_BH.pdf}
+\caption{Results from \textsc{starpies} for an array of synthesised galaxies with known true $[Z, t_q, \tau]$ values (marked by the solid red lines) assuming an error on the input spectral measurements of the average error on the measured MaNGA spectra measurements. {\check Pruning has been applied?} In each case \textsc{starpies} has succeeded in locating the true parameter values within the degeneracies of the star formation history model.}
+\label{fig:test_mosaic}
+\end{figure*}
+
+\subsection{Testing accuracy}
+
+We have shown in the previous section that \textsc{starpies} is precise in returning known values for SFHs, however how can we be sure that it is returning an accurate result? 
+
+\subsection{Testing performance}
+
+\subsection{Testing against previously derived SFHs}
+
 \section{Conclusions}
 
 \bibliographystyle{mn2e}
