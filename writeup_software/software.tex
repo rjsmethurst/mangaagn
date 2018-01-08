@@ -1,0 +1,80 @@
+\documentclass[useAMS,usenatbib]{mn2e}
+\usepackage{footnote,graphicx,natbib,color,multirow,amsmath,url,amssymb,tabularx,hyperref,amssymb}
+
+\hypersetup{
+    colorlinks,
+    citecolor=blue,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+\def\lesssim{\mathrel{\hbox{\rlap{\hbox{\lower3pt\hbox{$\sim$}}}\hbox{\raise2pt\hbox{$<$}}}}}
+
+
+\begin{document}
+
+\title[There's something about \textsc{starpies}]{There's something about STARPIES}
+\author[Smethurst et al. 2018]{R. ~J. ~Smethurst,$^{1}$ C. ~J. ~Lintott,$^{2}$ et al.
+\\ $^1$ School of Physics and Astronomy, The University of Nottingham, University Park, Nottingham, NG7 2RD, UK
+\\ $^2$ Oxford Astrophysics, Department of Physics, University of Oxford, Denys Wilkinson Building, Keble Road, Oxford, OX1 3RH, UK
+}
+
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\begin{keywords}
+software -- description
+\end{keywords}
+
+\section{Introduction}
+\section{Description of Code}
+
+\begin{figure*}
+\centering
+\includegraphics[width=\textwidth]{../figures/example_spectra_fit.pdf}
+\caption{Example synthetic spectra constructed using FSPS, shown by the black solid line, along with the fit returned by the MaNGA DAP (i.e. ppxf, emission lines and absorption features) shown by the red dashed line. }
+\label{fig:spectrafit}
+\end{figure*}
+
+\begin{figure*}
+\centering
+\includegraphics[width=\textwidth]{../figures/fsps_mangadap_D4000_MgFe_hbeta_hdeltaA_EWs_halpha_OII_one_t_one_Z.png}
+\caption{The variation of model spectral features across the logarithmically binned two dimensional $[t_q, \tau]$ parameter space measured at $t_{obs}=13.6\rm{Gyr}$ and solar metallicity, $Z=Z_{\odot}$. The features shown from left to right are the $D4000$, $H\beta$, $H\delta_A$ and $MgFe`$ spectral absorption indices and the equivalent width of both $H\alpha$ and $[OII]$ emission lines. This figure shows how each feature is sensitive to the changing SFH and how they can be used to break the degeneracies that plague photometric studies of SFH. }
+\label{fig:rainbow}
+\end{figure*}
+
+\section{Output of Code}
+
+\begin{figure*}
+\centering
+\includegraphics[width=0.495\textwidth]{../figures/walkers_steps_burn_in_wihtout_pruning_25.pdf}
+\includegraphics[width=0.495\textwidth]{../figures/walkers_steps_pruning_25.pdf}
+\caption{The positions traced by the \emph{emcee} walkers with step number (i.e. time) in each of the $[Z, t_q, \tau]$ dimensions during the burn in phase before pruning (left) and the post burn-in phase after pruning (right). The red lines show the known true values in each panel. Walkers have got stuck in local minima (see Figure±\ref{fig:localminima}) but some have managed to find the global minimum which can be seen more clearly in the right hand panels.}
+\label{fig:comparepruning}
+\end{figure*}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.495\textwidth]{../figures/pruning_features.png}
+\caption{This figure shows the walker positions marginalized over the $Z$ dimension into the two dimensional model $[t_q, \tau]$ space and coloured by their log probability value. The higher the value of their log probability, the more likely the model is. The lower values of log probability for some groups of walkers suggests that these are indeed stuck in local minima. These clusters of walkers in local minima can be `pruned' (see Section~\ref{sec:pruning}) away to leave only the global minimum in the final output.}
+\label{fig:localminima}
+\end{figure}
+
+
+\begin{figure*}
+\centering
+\includegraphics[width=\textwidth]{../figures/starpy_output_corner_test_pruning_25.png}
+\caption{Example output from \textsc{starpies} showing the posterior probability function traced by the MCMC walkers across the three dimensional parameter space $[Z, t_q, \tau]$. Dashed lines show the 18th, 50th and 64th percentile of each distribution function which can be interpreted as the `best fit' with $±1\sigma$. The blue lines show the known true values which \textsc{starpies} has managed to recover.}
+\label{fig:output}
+\end{figure*}
+
+\section{Testing}
+\section{Conclusions}
+
+\bibliographystyle{mn2e}
+\bibliography{refs}  
+
+\end{document}
