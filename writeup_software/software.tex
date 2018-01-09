@@ -150,7 +150,20 @@ In order to test that \textsc{starpies} can find the correct quenched SFH model 
 
 We have shown in the previous section that \textsc{starpies} is precise in returning known values for SFHs, however how can we be sure that it is returning an accurate result? 
 
-\subsection{Testing performance}
+\subsection{Testing performance with different known SFHs}
+
+Obviously, not all galaxies will be accurately described by an exponentially quenching SFH. In special use cases (for example studying post starburst galaxies) a different SFH may be defined by the user by replacing the \texttt{expsfh} function with their own. 
+
+However, we have also tested how \textsc{starpies} behaves when known SFHs of different shapes to the exponentially quenching model it assumes are input. We tested a constant, burst, many burst, normal and log-normal models of SFH (see Figure~\ref{fig:differentSFHs}) all of which are often used in the literature to model simple SFHs. 
+
+We found that \textsc{starpies} was always sensitive to the most recent epoch of star formation or quenching. For the constant SFR model, \textsc{starpies} returned a very recent $t_q$ and a very large $\tau$, i.e. a galaxy which has had constant SFR up until very recently at which point it started to decline very slowly. For the burst and many-burst models, \textsc{starpies} returns a constant SFR up until the peak of the last burst at which point quenching happens very rapidly. Similarly for the log normal and normal SFHs, \textsc{starpies} returns a best fit SFH with constant SFR until the peak of the normal and which point it declines at a rate comparable to the drop off of the Gaussian SFH. 
+
+\begin{figure}
+\centering
+\includegraphics[width=0.475\textwidth]{../figures/different_SFHs_to_test.png}
+\caption{The shapes of the different known SFHs input into \textsc{starpies}.}
+\label{fig:differentSFHs}
+\end{figure}
 
 \subsection{Testing against previously derived SFHs}
 
