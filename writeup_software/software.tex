@@ -1,5 +1,5 @@
 \documentclass[useAMS,usenatbib]{mn2e}
-\usepackage{footnote,graphicx,natbib,color,multirow,amsmath,url,amssymb,tabularx,hyperref,amssymb}
+\usepackage{footnote,graphicx,natbib,color,multirow,amsmath,url,amssymb,tabularx,hyperref,amssymb, mathtools}
 \usepackage{aas_macros}
 
 \hypersetup{draft,
@@ -88,7 +88,39 @@ We then employ stellar population synthesis models (SPS) in order to construct s
 \label{fig:rainbow}
 \end{figure*}
 
-\subsection{Markov Chain Monte Carlo Methods}\label{sec:emcee}
+\subsection{Bayesian inference of SFH parameters}\label{sec:emcee}
+
+For the SFH problem at hand, using a Bayesian approach requires consideration of all possible combinations of the model parameters $\theta \equiv [Z, t_{q}, \tau]$ (the hypothesis in this instance). Assuming that all galaxies formed at $t=0~\rm{Gyr}$, we can assume that the `age' of a spectrum is equivalent to an observed time, $t^{obs}_{k}$. I then used this  `age' to calculate the \emph{predicted}, $p$, spectral features at this cosmic time for a given combination of $\theta$: $\overline{d}_{s,p}(\theta_k, t^{obs}_{k})$ for each of the six spectral features: $\rm{EW}[H\alpha]$, $\rm{EW}[OII]$, $D4000$, $H\beta$, $H\delta_A$ and $MgFe'$. The predicted spectral features can now directly be compared with input observed spectral features, so that for a single spectrum $k$ with features $\overline{d}_{k} = \{s_k\}$, with length $S$, the likelihood of a given model $P(d_{k}|\theta_k, t^{obs}_{k})$ to be:
+
+
+% \begin{multline}\label{like}
+% P(d_{k}|\theta_k, t^{obs}_{k}) = \frac{1}{\sqrt{2\pi\sigma_{opt, k}^2}}\frac{1}{\sqrt{2\pi\sigma_{NUV, k}^2}} \\ \exp{\left[ - \frac{(d_{opt, k} - d_{opt, p}(\theta_k, t_{k}^{obs}))^2}{\sigma_{opt, k}^2} \right]} \\ \exp{\left[ - \frac{(d_{NUV, k} - d_{NUV, p}(\theta_k, t_{k}^{obs}))^2}{\sigma_{NUV, k}^2} \right]}.
+% \end{multline}
+
+\begin{multline}\label{like}
+P(\overline{d}_{k}|\theta_k, t^{obs}_{k}) = \\ \prod_{s=1}^{S} \frac{1}{\sqrt{2\pi\sigma_{s, k}^2}} \exp{\left[ - \frac{(d_{s, k} - d_{s, p}(\theta_k, t_{k}^{obs}))^2}{\sigma_{s, k}^2} \right]}
+\end{multline}
+
+Here I have assumed that $P(d_{s, k}|\theta_k, t^{obs}_{k})$ are all independent of each other and that the errors on the observed features, $\sigma_{s, k}$, are also independent (a simplifying assumption but difficult to otherwise constrain). To obtain the probability of a combination of $\theta$ values given the data: $P(\theta_k|\overline{d}_k, t^{obs})$, i.e. how likely a single SFH model is  given the observed spectral features of a spectrum, I utilise Bayes' theorem as:
+ \begin{equation}\label{big}
+P(\theta_k|\overline{d}_k, t^{obs}) = \frac{P(\overline{d}_k|\theta_k, t^{obs})P(\theta_k)}{\int P(\overline{d}_k |\theta_k, t^{obs})P(\theta_k) d\theta_k}.
+\end{equation}
+I assume a flat prior on the model parameters so that:
+\begin{equation}\label{prior}
+P(\theta_k) =
+\begin{dcases}
+1 & \text{if } 0 < Z [Z_{\odot}] \leq 1.5 \text{ and } 0 < t_q ~\rm{[Gyr]}~ \leq 13.8 ~ \text{ and } ~ 0 < \tau  ~\rm{[Gyr]}~ \leq 6\\
+0 & \text{otherwise.} \\
+\end{dcases}
+\end{equation}
+
+As the denominator of Equation~\ref{big} is a normalisation factor, comparison between likelihoods for two different SFH models (i.e., two different combinations of $\theta_k = [Z, t_q, \tau]$) is equivalent to a comparison of the numerators. Markov Chain Monte Carlo (MCMC; \citealt{mackay03, emcee13, GW10}) analysis provides a robust comparison of the likelihoods between $\theta$ values.
+
+MCMC allows for a more efficient exploration of the parameter space than a simple $\chi^2$ analysis by avoiding those areas with low likelihood. A large number of `walkers' are started at an initial position (i.e. an initial hypothesis, $\theta$), where the likelihood is calculated; from there they individually `jump' a randomised distance to a new area of parameter space. If the likelihood in this new position is greater than the original position then the `walkers' accept this change in position. Any new position then influences the direction of the  `jumps' of other walkers (this is the case in ensemble MCMC as used in this investigation but not for simple MCMC, which is much slower at converging). This is repeated for the defined number of steps after an initial `burn-in' phase. The length of this burn-in phase is determined after sufficient experimentation to ensure that the `walkers' have converged on a region of parameter space. Here we use \emph{emcee},\footnote{\url{dan.iel.fm/emcee/}} a \emph{Python} module which implements an affine invariant ensemble sampler to explore the parameter space, written by \cite{emcee13}. \emph{emcee} outputs the positions of these `walkers' in the parameter space, which are analogous to the regions of high posterior probability. 
+
+For each run of \textsc{starpies}, the inference run is initialised with 100 walkers with a burn-in phase of 500 steps before a main run of 100 steps. Acceptance fractions for each walker are difficult to estimate due to the fact that walkers often get stuck in local minima during a run (see Section~\ref{sec:pruning} for more information). 
+
+I used the \emph{Python} programming language to code the routine outlined above into a package named \textsc{starpies} ~which has been released with an open source license. The required inputs for \textsc{starpies} to run on a single spectrum are at least one, if not all, of $\rm{EW}H\alpha$, $\rm{EW}[OII]$, $D4000$, $H\beta$, $H\delta_A$ and $MgFe`$ and their associated errors and the redshift, $z$. 
 
 
 \subsection{Pruning}\label{sec:pruning}
@@ -124,6 +156,7 @@ All the walkers with with $k>j$ are thrown away and only the ones with $k \leq j
 
 \section{Output of Code}\label{sec:output}
 
+The burn-in and main run walker positions and posterior probabilities at each step are written to disc by \textsc{starpies}. From this three dimensional MCMC chain charting the $[Z, t_q, \tau]$ positions of the walkers around parameter space, the `best fit' $[Z, t_q, \tau]$ values along with their uncertainties can be determined from the 16th, 50th and 84th percentile values of the walker positions. An example output from \textsc{starpies} for a single synthetic spectrum constructed with the FSPS models (see Section~\ref{sec:fsps}) is shown in Figure~\ref{fig:output}. This figure is also written to disc by \textsc{starpies} upon completion of a run on a single spectrum.  
 
 \begin{figure*}
 \centering

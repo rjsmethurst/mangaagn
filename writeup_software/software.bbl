@@ -24,16 +24,30 @@
   {MacDonald} E.,  {Nonino} M.,  {Popesso} P.,  {Stern} D.,    {Vanzella} E.,
   2007, \aap, 468, 33
 
+\bibitem[\protect\citeauthoryear{{Foreman-Mackey}, {Hogg}, {Lang} \&
+  {Goodman}}{{Foreman-Mackey} et~al.}{2013}]{emcee13}
+{Foreman-Mackey} D.,  {Hogg} D.~W.,  {Lang} D.,    {Goodman} J.,  2013, \pasp,
+  125, 306
+
 \bibitem[\protect\citeauthoryear{{Gonz{\'a}lez}, {Labb{\'e}}, {Bouwens},
   {Illingworth}, {Franx}, {Kriek} \& {Brammer}}{{Gonz{\'a}lez}
   et~al.}{2010}]{gonzalez10}
 {Gonz{\'a}lez} V.,  {Labb{\'e}} I.,  {Bouwens} R.~J.,  {Illingworth} G.,
   {Franx} M.,  {Kriek} M.,    {Brammer} G.~B.,  2010, \apj, 713, 115
 
+\bibitem[\protect\citeauthoryear{{Goodman} \& {Weare}}{{Goodman} \&
+  {Weare}}{2010}]{GW10}
+{Goodman} J.,  {Weare} J.,  2010, CAMCS, 5, 65
+
 \bibitem[\protect\citeauthoryear{{Hou}, {Goodman}, {Hogg}, {Weare} \&
   {Schwab}}{{Hou} et~al.}{2012}]{hou12}
 {Hou} F.,  {Goodman} J.,  {Hogg} D.~W.,  {Weare} J.,    {Schwab} C.,  2012,
   \apj, 745, 198
+
+\bibitem[\protect\citeauthoryear{{Mackay}}{{Mackay}}{2003}]{mackay03}
+{Mackay} D.~J.~C.,  2003, {Information Theory, Inference and Learning
+  Algorithms}.
+{Cambridge University Press}
 
 \bibitem[\protect\citeauthoryear{{Martin}, {Wyder}, {Schiminovich}, {Barlow},
   {Forster}, {Friedman}, {Morrissey}, {Neff}, {Seibert}, {Small}, {Welsh},
