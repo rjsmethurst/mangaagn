@@ -4,45 +4,46 @@ The top-level auxiliary file: software.aux
 The style file: mn2e.bst
 Database file #1: refs.bib
 Warning--I didn't find a database entry for ""
-You've used 27 entries,
+Warning--I didn't find a database entry for "?"
+You've used 28 entries,
             2601 wiz_defined-function locations,
-            696 strings with 10111 characters,
-and the built_in function-call counts, 15450 in all, are:
-= -- 1365
-> -- 1502
+            702 strings with 10387 characters,
+and the built_in function-call counts, 16141 in all, are:
+= -- 1424
+> -- 1577
 < -- 10
-+ -- 534
-- -- 534
-* -- 1610
-:= -- 2891
++ -- 561
+- -- 561
+* -- 1685
+:= -- 3020
 add.period$ -- 0
-call.type$ -- 27
-change.case$ -- 286
-chr.to.int$ -- 27
-cite$ -- 27
-duplicate$ -- 296
-empty$ -- 437
-format.name$ -- 575
-if$ -- 2727
+call.type$ -- 28
+change.case$ -- 299
+chr.to.int$ -- 28
+cite$ -- 28
+duplicate$ -- 307
+empty$ -- 453
+format.name$ -- 603
+if$ -- 2848
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 28
-newline$ -- 86
-num.names$ -- 108
-pop$ -- 231
+missing$ -- 29
+newline$ -- 89
+num.names$ -- 112
+pop$ -- 242
 preamble$ -- 2
-purify$ -- 313
+purify$ -- 327
 quote$ -- 0
-skip$ -- 458
+skip$ -- 477
 stack$ -- 0
-substring$ -- 554
-swap$ -- 27
+substring$ -- 576
+swap$ -- 28
 text.length$ -- 0
-text.prefix$ -- 178
+text.prefix$ -- 187
 top$ -- 0
-type$ -- 240
+type$ -- 249
 warning$ -- 0
-while$ -- 105
+while$ -- 109
 width$ -- 0
-write$ -- 271
-(There was 1 warning)
+write$ -- 281
+(There were 2 warnings)

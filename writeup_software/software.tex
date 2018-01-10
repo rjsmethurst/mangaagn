@@ -216,7 +216,7 @@ I used the \emph{Python} programming language to code the routine outlined in Se
 
 \section{Testing}\label{sec:test}
 
-\subsection{Testing precision}\section{sec:precisiontest}
+\subsection{Testing precision}\label{sec:precisiontest}
 
 \begin{figure*}
 \centering
@@ -249,7 +249,38 @@ For further combinations of missing parameters, we suggest the user completes th
 
 \subsection{Testing accuracy}\label{sec:accuracytest}
 
-We have shown in the previous section that \textsc{snitch} is precise in returning known values for SFHs, however how can we be sure that it is returning an accurate result? 
+We have shown in the previous section that \textsc{snitch} is precise in returning known values for SFHs, however how can we be sure that it is returning an accurate result? In order to quantify this statement we have run \textsc{snitch} on spectra which have previously derived star formation histories. Firstly, on those which have had toy models derived, secondly those spectra which have had full spectral fitting applied and thirdly spectra with defined star formation histories from hydrodynamic simulations.
+
+\subsubsection{Comparing with other toy model SFH codes} 
+
+In the case of the previously fitted toy models, we have compared the results of \textsc{snitch} with the toy star formation histories derived by \cite{tojeiro13} for a sample of $?$ galaxies each with a spectrum from SDSS. We obtained the pre-measured spectral features from SDSS DR9 \cite{abazajian09} archival data for each spectra and input them into \textsc{snitch}. Since \cite{tojeiro13} quoted their results in terms of the fraction of stars formed in a given time period, we have followed the same method. In Table~\ref{table:tojeirocompare} we have listed the six samples used by \citeauthor{tojeiro13} and their results, the best fit $[Z, t_q, \tau]$ parameters returned by \textsc{snitch} and the  fractions of stars formed in each time period as quoted in their results. We can see from the results in this table that \textsc{snitch} broadly {dis}agrees with the results of \cite{tojeiro13} suggesting that it does indeed return an accurate toy model of star formation history. 
+
+\begin{table*}
+\centering
+\caption{The mean star formation fraction (SFF) in each age bin for the six galaxy samples quoted by \protect\cite[][TSFF]{tojeiro13} and returned by \textsc{snitch}. Each value is quoted with a $1\sigma$ uncertainty, for the \protect\cite{tojeiro13} values this is quoted as the standard error on the mean for each bin . The SFF and $1\sigma$ errors are given in units of $10^{-3}$.}
+\label{table:tojeirocompare}
+\begin{tabular*}{0.9\textwidth}{l|cc|cc|cc|cc}
+                        & \multicolumn{2}{c|}{$0.01 - 0.074~\rm{Gyr}$}     & \multicolumn{2}{c|}{$0.074 - 0.425~\rm{Gyr}$} & \multicolumn{2}{c|}{$0.425 - 2.44~\rm{Gyr}$} & \multicolumn{2}{c}{$2.44 - 13.7~\rm{Gyr}$} \\ \hline
+                        & TSFF & \multicolumn{1}{c|}{\textsc{snitch} SFF} & TSFF          & \textsc{snitch} SFF          & TSFF          & \textsc{snitch} SFF         & TSFF         & \textsc{snitch} SFF        \\ \hline
+Red ellipticals         & 0.11   &    &  0.32  &       &  33   &      &  966  &       \\
+Red early-type spirals  & 0.65   &    &  2.4   &       &  36   &      &  960  &       \\
+Red late-type spirals   &  1.9   &    &  5.6   &       &  59   &      &  933  &       \\ \hline
+Blue ellipticals        &  2.5   &    &  11    &       &  52   &      &  934  &       \\
+Blue early-type spirals &  4.9   &    &  14    &       &  42   &      &  938  &       \\
+Blue late-type spirals  &  6.1   &    &  11    &       &  43   &      &  939  &                             
+\end{tabular*}
+\end{table*}
+
+\subsubsection{Comparing with full spectral fitting codes}\label{sec:fspftest}
+
+
+For the case of the full spectral fit derived star formation history, we have chosen three examples from work by \cite{?} in the MaNGA team. The sample used by \citeauthor{?} have had their spectra fit and measured using the full MaNGA DAP pipeline \citep{westfall18} so measurements of their spectral features were readily available. We used these measurements as inputs into \textsc{snitch} and in Figure~\ref{fig:fspfcompare} have plotted the output best fit quenching history in comparison to that output by the full spectra fitting code of \cite{?}. This figure shows that although we implement a toy model of star formation history in \textsc{snitch}, we are able to recover the features of the most recent epoch of star formation.  
+
+\subsubsection{Comparing with SFHs from hydrodynamic simulations}
+
+We have obtained $??$ spectra generated using the ???? suite of hydrodynamic simulations and have measured their spectral features using the MaNGA DAP functions outlined in Section~\ref{sec:dap}. We have then input these measurements into \textsc{snitch} to derive the best fit $[Z, t_q, \tau]$ parameters describing our toy model of SFH to compare with those known by the hydrodynamic simulation. As the hydrodynamic simulation works on the same principle of using a library of stellar templates to generate spectra from a known population of stars this test does have some circular issues which arise. In a way it is very similar to our initial tests with known SFHs that we have generated in Section~\ref{sec:precisiontest}, however the known SFHs can be classed as more realistic in this case. This test is sort of a combination of those tests described in Sections~\ref{sec:precisiontest}\&\ref{sec:fspftest}.
+
+We can see that the output from \textsc{snitch} does {dis}agree with the known detailed SFH provided by the hydrodynamic simulation.
 
 
 \subsection{Testing performance with different known SFHs}
@@ -267,9 +298,10 @@ We found that \textsc{snitch} was always sensitive to the most recent epoch of s
 \label{fig:differentSFHs}
 \end{figure}
 
-\subsection{Testing against previously derived SFHs}
 
 \section{Conclusions}
+
+We have described our quenching history inference code \textsc{snitch} (bayeSian iNference given emIssion and absorpTion spectral features of quenChing Histories) which uses absorption and emission features from a spectra to infer a simple toy model of star formation history. We have demonstrated that it is both precise and accurate at deriving a toy model of star formation history for a single spectrum. We advocate the use of this code not to derive and quote a detailed star formation history of a single source, but as a comparative tool across a sample of spectra. 
 
 \bibliographystyle{mn2e}
 \bibliography{refs}  
