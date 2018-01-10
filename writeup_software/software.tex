@@ -17,7 +17,7 @@
 
 \begin{document}
 
-\title[There's something about \textsc{starpies}]{Spectro Starponum: A simple, comparative SFH inference tool}
+\title[\textsc{snitch}: inferring quenching histories]{SNITCH: Seeking a simple, comparative SFH inference tool}
 \author[Smethurst et al. 2018]{R. ~J. ~Smethurst,$^{1}$ C. ~J. ~Lintott,$^{2}$ et al.
 \\ $^1$ School of Physics and Astronomy, The University of Nottingham, University Park, Nottingham, NG7 2RD, UK
 \\ $^2$ Oxford Astrophysics, Department of Physics, University of Oxford, Denys Wilkinson Building, Keble Road, Oxford, OX1 3RH, UK
@@ -26,7 +26,7 @@
 \maketitle
 
 \begin{abstract}
-We present \textsc{starpies}, an open source code written in \emph{Python}, developed to infer a simple toy model of star formation history of a galaxy spectrum from the emission and absorption features. \textsc{starpies} utilises FSPS, the MaNGA DAP and \emph{emcee} in order to provide the inferred $[Z, t_q, \tau]$ parameters with which to describe the exponentially declining quenching history of the input spectral features. This code was written for use on the MaNGA spectral data cubes but can be used for any scenario where a spectrum has been obtained, or spectral feature measurements have been provided. This code is not intended for an accurate inference of a single spectrum SFH but as a comparison of SFHs across many different spectra, either in an IFU scenario or across a galaxy population.
+We present \textsc{snitch}, an open source code written in \emph{Python}, developed to infer a simple toy model of star formation history of a galaxy spectrum from the emission and absorption features. \textsc{snitch} utilises FSPS, the MaNGA DAP and \emph{emcee} in order to provide the inferred $[Z, t_q, \tau]$ parameters with which to describe the exponentially declining quenching history of the input spectral features. This code was written for use on the MaNGA spectral data cubes but can be used for any scenario where a spectrum has been obtained, or spectral feature measurements have been provided. This code is not intended for an accurate inference of a single spectrum SFH but as a comparison of SFHs across many different spectra, either in an IFU scenario or across a galaxy population.
 \end{abstract}
 
 \begin{keywords}
@@ -39,11 +39,15 @@ Whilst there are many codes which provide a full spectral fit to a galaxy spectr
 
 Here we present an open source \emph{Python} software which uses Bayesian statistics and MCMC methods to infer a simple toy model of SFH from the absorption and emission features of a galaxy (or IFU) spectrum. 
 
-Herein we describe our SFH inference code, \textsc{starpies}, in Section~\ref{sec:code}, the expected output of the code in Section~\ref{sec:output}, along with the rigorous testing procedures applied to \textsc{starpies} in Section~\ref{sec:test}. Where necessary we adopt the Planck 2015 \citep{planck16} cosmological parameters with $(\Omega_m, \Omega_{\lambda}, h) = (0.31, 0.69e, 0.68)$. 
+%QUIDDITCH: QUenching hIstory Determination with absorption inDices and emIssion lines using bayesian TeCHniques
+
+%QUIDDITCH: QUenching Investigations with Data-Driven Inference TeCHniques
+
+Herein we describe our SFH inference code, \textsc{snitch} (bayeSian iNference given emIssion and absorpTion features of quenChing Histories), in Section~\ref{sec:code}, the expected output of the code in Section~\ref{sec:output}, along with the rigorous testing procedures applied to \textsc{snitch} in Section~\ref{sec:test}. Where necessary we adopt the Planck 2015 \citep{planck16} cosmological parameters with $(\Omega_m, \Omega_{\lambda}, h) = (0.31, 0.69e, 0.68)$. 
 
 \section{Description of Code}\label{sec:code}
 
-Simply put, \textsc{starpies} takes absorption and emission spectral features and their associated errors as inputs, assumes a simple SFH model and convolves it with a SPS to generate a synthetic spectra. These synthetic spectra are then fitted to give resulting prediced absorption and emission spectral features which the code uses to infer the best fit model using Bayesian statistics and MCMC methods given the spectral inputs. 
+Simply put, \textsc{snitch} takes absorption and emission spectral features and their associated errors as inputs, assumes a simple SFH model and convolves it with a SPS to generate a synthetic spectra. These synthetic spectra are then fitted to give resulting prediced absorption and emission spectral features which the code uses to infer the best fit model using Bayesian statistics and MCMC methods given the spectral inputs. 
 
 We describe this process below, first defining our toy model of SFH, describing how we convolve this with SPS models to produce synthetic spectra (Section~\ref{sec:fsps}), how these spectra are then fitted to provide predicted model spectral features (Section~\ref{sec:dap}) and then how these are used to infer the best fit SFH given the input parameters (Section~\ref{sec:emcee}). 
 
@@ -100,15 +104,15 @@ sp.set_tabular_sfh(age = ages, sfr=sfrs)
 
 
 
-In \textsc{starpies} we set up the FSPS models to produce spectra using the Padova isochrones \citep{girardi02} and MILES spectral library \citep{vazdekis16} with nebular emission, emission from dust \cite{draineli07}, a \cite{chabrier03} IMF and a \cite{calzetti00} dust extinction curve. We also smooth the generated synthetic spectra to have the minimum velocity dispersion measurable by MaNGA, $77~\rm{km}~{s}^{-1}$ \citep{bundy15}. Spectra are generated for the 22 metalicities provided in the MILES models, ranging from $0.011~Z_{\odot}$ to $1.579~Z_{\odot}$ across a logarithmic age range spanning the Universe's history. FSPS does not allow for chemical enrichment of stellar birth material with time, i.e. the metallicity is kept constant for a given SFH at all epochs.\footnote{Whilst we could attempt to provide a feature to implement chemical enrichment into these models this would firstly be full of uncertainty (the propagation of which would be unquantifiable) and secondly move us out of the regime of a toy SFH model and into hydrodynamic simulation territory. } These spectra are generated across a 4-dimensional array in $[t_{obs}, Z, t_q, \tau]$in order to facilitate faster run time during inference (see Section~\ref{sec:emcee}).
+In \textsc{snitch} we set up the FSPS models to produce spectra using the Padova isochrones \citep{girardi02} and MILES spectral library \citep{vazdekis16} with nebular emission, emission from dust \cite{draineli07}, a \cite{chabrier03} IMF and a \cite{calzetti00} dust extinction curve. We also smooth the generated synthetic spectra to have the minimum velocity dispersion measurable by MaNGA, $77~\rm{km}~{s}^{-1}$ \citep{bundy15}. Spectra are generated for the 22 metalicities provided in the MILES models, ranging from $0.011~Z_{\odot}$ to $1.579~Z_{\odot}$ across a logarithmic age range spanning the Universe's history. FSPS does not allow for chemical enrichment of stellar birth material with time, i.e. the metallicity is kept constant for a given SFH at all epochs.\footnote{Whilst we could attempt to provide a feature to implement chemical enrichment into these models this would firstly be full of uncertainty (the propagation of which would be unquantifiable) and secondly move us out of the regime of a toy SFH model and into hydrodynamic simulation territory. } These spectra are generated across a 4-dimensional array in $[t_{obs}, Z, t_q, \tau]$in order to facilitate faster run time during inference (see Section~\ref{sec:emcee}).
 
 An example synthetic spectra generated with FSPS for solar metallicity, with a {\check $t_q~=~10~\rm{Gyr},~\tau~=~1.0~\rm{Gyr}$ observed at a redshift, $z=0.1$ (i.e. $t_{obs}=12.1~\rm{Gyr}$)} is shown by the solid black line in Figure~\ref{fig:spectrafit}.
 
 \subsection{Measuring the synthetic spectral features}\label{sec:dap}
 
-This code was originally developed for a specific science case using MaNGA IFU survey data \citep[an integral-field spectroscopic survey of 10,000 galaxies undertaken by the fourth phase of the Sloan Digital Sky Survey, SDSS-IV; ][]{bundy15}. We therefore wished to measure our synthetic spectra generated using FSPS (see Section~\ref{sec:fsps}) in the same way as the MaNGA data. It is for that reason that we use the functions defined in the MaNGA Data Analysis Pipeline \citep[DAP;][]{westfall18} version $2.0.2$ in order to measure the features in our synthetic spectra. If the user has a predefined method for measuring emission and absorption features in their spectra, the \texttt{measure\_spec} function in \textsc{starpies} can simply be adapted.
+This code was originally developed for a specific science case using MaNGA IFU survey data \citep[an integral-field spectroscopic survey of 10,000 galaxies undertaken by the fourth phase of the Sloan Digital Sky Survey, SDSS-IV; ][]{bundy15}. We therefore wished to measure our synthetic spectra generated using FSPS (see Section~\ref{sec:fsps}) in the same way as the MaNGA data. It is for that reason that we use the functions defined in the MaNGA Data Analysis Pipeline \citep[DAP;][]{westfall18} version $2.0.2$ in order to measure the features in our synthetic spectra. If the user has a predefined method for measuring emission and absorption features in their spectra, the \texttt{measure\_spec} function in \textsc{snitch} can simply be adapted.
 
-The MaNGA DAP is described in full detail in \cite{westfall18}, however here we lay out the functions used in \textsc{starpies} to fit our synthetic spectra. Firstly we used pPXF \citep{cappellari04} to extract a fit of the stellar continuum of our synthetic spectra. Here we use the version of pPXF coded into the MaNGA DAP using the \texttt{PPXFFit} object and the MILES template spectral libraries. Secondly, we used the obtained stellar continuum to fit the emission line features in the spectra using the \texttt{Elric} object and the \texttt{"ELPFULL"} emission line database of 26 lines provided in the MaNGA DAP. This procedure provides emission line fluxes, equivalent widths, and kinematics from single component Gaussian fits. All strong lines are fit, as well as the Balmer series up to $\rm{H}\epsilon$ and other weaker lines. Finally, we then fit the absorption indices in our synthetic spectra using the \texttt{SpectralIndices} object and the \texttt{"EXTINDX"} index database of 42 indices provided in the MaNGA DAP. Spectral-index measurements including the $4000\AA$ break, $\rm{TiO}$ bandhead features and the full Lick system. All indices are measured at the MaNGA resolution (specified for each index) and corrections are provided to a nominal, $\sigma_v = 0$ measurement. The measurements of the Lick indices are provided by convolving the MaNGA data to the Lick resolution. 
+The MaNGA DAP is described in full detail in \cite{westfall18}, however here we lay out the functions used in \textsc{snitch} to fit our synthetic spectra. Firstly we used pPXF \citep{cappellari04} to extract a fit of the stellar continuum of our synthetic spectra. Here we use the version of pPXF coded into the MaNGA DAP using the \texttt{PPXFFit} object and the MILES template spectral libraries. Secondly, we used the obtained stellar continuum to fit the emission line features in the spectra using the \texttt{Elric} object and the \texttt{"ELPFULL"} emission line database of 26 lines provided in the MaNGA DAP. This procedure provides emission line fluxes, equivalent widths, and kinematics from single component Gaussian fits. All strong lines are fit, as well as the Balmer series up to $\rm{H}\epsilon$ and other weaker lines. Finally, we then fit the absorption indices in our synthetic spectra using the \texttt{SpectralIndices} object and the \texttt{"EXTINDX"} index database of 42 indices provided in the MaNGA DAP. Spectral-index measurements including the $4000\AA$ break, $\rm{TiO}$ bandhead features and the full Lick system. All indices are measured at the MaNGA resolution (specified for each index) and corrections are provided to a nominal, $\sigma_v = 0$ measurement. The measurements of the Lick indices are provided by convolving the MaNGA data to the Lick resolution. 
 
 
 \subsection{Choosing which spectral features to use}
@@ -130,7 +134,7 @@ We looked at plots similar to those shown in Figure~\ref{fig:rainbow} for all 26
 \item MgFe' as it is most sensitive to the metallicity of the stellar population irrespective of the current star formation rate
 \end{enumerate}
 
-Each of these features is measured in the synthetic to spectra in order for the input values to be compared to model values to find the best fit SFH. Not all six features need to be measured in a spectrum for \textsc{starpies} to run, although not providing one as input does restrict the accuracy to which a SFH can be inferred (see Section~\ref{sec:testremoval}). An estimate of the error on these measured values is also needed for \textsc{starpies} to run. 
+Each of these features is measured in the synthetic to spectra in order for the input values to be compared to model values to find the best fit SFH. Not all six features need to be measured in a spectrum for \textsc{snitch} to run, although not providing one as input does restrict the accuracy to which a SFH can be inferred (see Section~\ref{sec:testremoval}). An estimate of the error on these measured values is also needed for \textsc{snitch} to run. 
 
 
 \subsection{Bayesian inference of SFH parameters}\label{sec:emcee}
@@ -163,7 +167,7 @@ As the denominator of Equation~\ref{big} is a normalisation factor, comparison b
 
 MCMC allows for a more efficient exploration of the parameter space than a simple $\chi^2$ analysis by avoiding those areas with low likelihood. A large number of `walkers' are started at an initial position (i.e. an initial hypothesis, $\theta$), where the likelihood is calculated; from there they individually `jump' a randomised distance to a new area of parameter space. If the likelihood in this new position is greater than the original position then the `walkers' accept this change in position. Any new position then influences the direction of the  `jumps' of other walkers (this is the case in ensemble MCMC as used in this investigation but not for simple MCMC, which is much slower at converging). This is repeated for the defined number of steps after an initial `burn-in' phase. The length of this burn-in phase is determined after sufficient experimentation to ensure that the `walkers' have converged on a region of parameter space. Here we use \emph{emcee},\footnote{\url{dan.iel.fm/emcee/}} a \emph{Python} module which implements an affine invariant ensemble sampler to explore the parameter space, written by \cite{emcee13}. \emph{emcee} outputs the positions of these `walkers' in the parameter space, which are analogous to the regions of high posterior probability. 
 
-For each run of \textsc{starpies}, the inference run is initialised with 100 walkers with a burn-in phase of 500 steps before a main run of 100 steps. Acceptance fractions for each walker are difficult to estimate due to the fact that walkers often get stuck in local minima during a run (see Section~\ref{sec:pruning} for more information). 
+For each run of \textsc{snitch}, the inference run is initialised with 100 walkers with a burn-in phase of 500 steps before a main run of 100 steps. Acceptance fractions for each walker are difficult to estimate due to the fact that walkers often get stuck in local minima during a run (see Section~\ref{sec:pruning} for more information). 
 
 
 \subsection{Pruning walkers stuck in local minima}\label{sec:pruning}
@@ -183,7 +187,7 @@ For each run of \textsc{starpies}, the inference run is initialised with 100 wal
 \label{fig:comparepruning}
 \end{figure*}
 
-After running \textsc{starpies} and upon inspection of the walker positions it became apparent that the walkers of \emph{emcee} would often get stuck in local minima. We therefore implemented a pruning method, as described in \cite{hou12}, in order to remove those walkers in local minima leaving only the global minima from which to derive inferred SFH parameters. The method outlined in \cite{hou12} is a simple one dimensional clustering method wherein the average negative log-likelihood for each walker is collected. This results in $L$ numbers:
+After running \textsc{snitch} and upon inspection of the walker positions it became apparent that the walkers of \emph{emcee} would often get stuck in local minima. We therefore implemented a pruning method, as described in \cite{hou12}, in order to remove those walkers in local minima leaving only the global minima from which to derive inferred SFH parameters. The method outlined in \cite{hou12} is a simple one dimensional clustering method wherein the average negative log-likelihood for each walker is collected. This results in $L$ numbers:
 \begin{equation}
 \overline{l}_k = \frac{1}{T} \sum^{T}_{t=1} l(\vec{\theta}_k(t)|D),
 \end{equation}
@@ -199,51 +203,67 @@ All the walkers with with $k>j$ are thrown away and only the ones with $k \leq j
 
 \section{Output of Code}\label{sec:output}
 
-The burn-in and main run walker positions and posterior probabilities at each step are written to disc by \textsc{starpies}. From this three dimensional MCMC chain charting the $[Z, t_q, \tau]$ positions of the walkers around parameter space, the `best fit' $[Z, t_q, \tau]$ values along with their uncertainties can be determined from the 16th, 50th and 84th percentile values of the walker positions. An example output from \textsc{starpies} for a single synthetic spectrum constructed with the FSPS models (see Section~\ref{sec:fsps}) is shown in Figure~\ref{fig:output}. This figure is also written to disc by \textsc{starpies} upon completion of a run on a single spectrum.  
+The burn-in and main run walker positions and posterior probabilities at each step are written to disc by \textsc{snitch}. From this three dimensional MCMC chain charting the $[Z, t_q, \tau]$ positions of the walkers around parameter space, the `best fit' $[Z, t_q, \tau]$ values along with their uncertainties can be determined from the 16th, 50th and 84th percentile values of the walker positions. An example output from \textsc{snitch} for a single synthetic spectrum constructed with the FSPS models (see Section~\ref{sec:fsps}) is shown in Figure~\ref{fig:output}. This figure is also written to disc by \textsc{snitch} upon completion of a run on a single spectrum.  
 
 \begin{figure*}
 \centering
 \includegraphics[width=\textwidth]{../figures/starpy_output_corner_test_pruning_25.png}
-\caption{Example output from \textsc{starpies} showing the posterior probability function traced by the MCMC walkers across the three dimensional parameter space $[Z, t_q, \tau]$. Dashed lines show the 18th, 50th and 64th percentile of each distribution function which can be interpreted as the `best fit' with $±1\sigma$. The blue lines show the known true values which \textsc{starpies} has managed to recover.}
+\caption{Example output from \textsc{snitch} showing the posterior probability function traced by the MCMC walkers across the three dimensional parameter space $[Z, t_q, \tau]$. Dashed lines show the 18th, 50th and 64th percentile of each distribution function which can be interpreted as the `best fit' with $±1\sigma$. The blue lines show the known true values which \textsc{snitch} has managed to recover.}
 \label{fig:output}
 \end{figure*}
 
-I used the \emph{Python} programming language to code the routine outlined in Section~\ref{sec:code} into a package named \textsc{starpies} ~which has been released with an open source license. The required inputs for \textsc{starpies} to run on a single spectrum are at least one, if not all, of $\rm{EW}H\alpha$, $\rm{EW}[OII]$, $\rm{D}4000$, $\rm{H}\beta$, $\rm{H}\delta_A$ and MgFe' and their associated errors and the spectrum redshift, $z$. 
+I used the \emph{Python} programming language to code the routine outlined in Section~\ref{sec:code} into a package named \textsc{snitch} ~which has been released with an open source license. The required inputs for \textsc{snitch} to run on a single spectrum are at least one, if not all, of $\rm{EW}H\alpha$, $\rm{EW}[OII]$, $\rm{D}4000$, $\rm{H}\beta$, $\rm{H}\delta_A$ and MgFe' and their associated errors and the spectrum redshift, $z$. 
 
 \section{Testing}\label{sec:test}
 
-\subsection{Testing precision}
+\subsection{Testing precision}\section{sec:precisiontest}
 
 \begin{figure*}
 \centering
 \includegraphics[width=\textwidth]{../code/test_log/mosaic_spec_starpy_test_0-874128238232_log_BH.pdf}
-\caption{Results from \textsc{starpies} for an array of synthesised galaxies with known true $[Z, t_q, \tau]$ values (marked by the solid red lines) assuming an error on the input spectral measurements of the average error on the measured MaNGA spectra measurements. {\check Pruning has been applied?} In each case \textsc{starpies} has succeeded in locating the true parameter values within the degeneracies of the star formation history model.}
+\caption{Results from \textsc{snitch} for an array of synthesised galaxies with known true $[Z, t_q, \tau]$ values (marked by the solid red lines) assuming an error on the input spectral measurements of the average error on the measured MaNGA spectra measurements. {\check Pruning has been applied?} In each case \textsc{snitch} has succeeded in locating the true parameter values within the degeneracies of the star formation history model.}
 \label{fig:test_mosaic}
 \end{figure*}
 
 
-In order to test that \textsc{starpies} can find the correct quenched SFH model for a given set of spectral features, 25 synthesised galaxy spectra were created with known SFHs (i.e. known values of $\theta = [Z, t_q, \tau]$) from which spectral features were generated using the FSPS models (see Section~\ref{sec:fsps}. These were input into \textsc{starpies} to test whether the known values of $\theta$ were reproduced, within error, for each of the 25 synthesised galaxies. Figure~\ref{fig:test_mosaic} shows the results for each of these synthesised galaxies, with the known values of $\theta$ shown by the red lines. In only one case for the $\tau$ parameter this red line does not fall within the 16th and 84th percentile values shown by the blue dashed lines (see bottom right panel). However, on inspection, this SFH was a constant SFR that had not yet quenched and so the posterior probability function returned for the $\tau$ parameter is very broad as \textsc{starpies} does not have any information with which to constrain this parameter. In all cases the intersection of the red lines (i.e. the known or true values input) resides within the parameter space explored by the walkers left over after pruning, which trace the global minimum of the posterior probability. Therefore \textsc{starpies} succeeds in precisely locating the true parameter values within the degeneracies of the SFH model for known values. 
+In order to test that \textsc{snitch} can find the correct quenched SFH model for a given set of spectral features, 25 synthesised galaxy spectra were created with known SFHs (i.e. known values of $\theta = [Z, t_q, \tau]$) from which spectral features were generated using the FSPS models (see Section~\ref{sec:fsps}. These were input into \textsc{snitch} to test whether the known values of $\theta$ were reproduced, within error, for each of the 25 synthesised galaxies. Figure~\ref{fig:test_mosaic} shows the results for each of these synthesised galaxies, with the known values of $\theta$ shown by the red lines. In only one case for the $\tau$ parameter this red line does not fall within the 16th and 84th percentile values shown by the blue dashed lines (see bottom right panel). However, on inspection, this SFH was a constant SFR that had not yet quenched and so the posterior probability function returned for the $\tau$ parameter is very broad as \textsc{snitch} does not have any information with which to constrain this parameter. In all cases the intersection of the red lines (i.e. the known or true values input) resides within the parameter space explored by the walkers left over after pruning, which trace the global minimum of the posterior probability. Therefore \textsc{snitch} succeeds in precisely locating the true parameter values within the degeneracies of the SFH model for known values. 
 
 
-\subsection{Testing precision when less spectral information provided}
+\subsection{Testing precision when less spectral information provided}\label{sec:missingtest}
 
-\subsection{Testing accuracy}
+\begin{table*}
+\centering
+\caption{The mean uncertainties ($\pm1±\sigma$) on the best fit for the 25 synthesised galaxy spectra returned when each spectral feature is omitted in turn}
+\label{table:missingtestone}
+\begin{tabular*}{0.9\textwidth}{l@{\extracolsep{\fill}}|ccccccc}
+Spectral feature omitted          & None & $\rm{H}\alpha$ & $[OII]$ & $D4000$ & $\rm{H}\beta$ & $\rm{H}\delta_A$ & MgFe' \\ \hline
+Average uncertainty $\pm1\sigma$ &      &                &         &         &               &                  &      
+\end{tabular*}
+\end{table*}
 
-We have shown in the previous section that \textsc{starpies} is precise in returning known values for SFHs, however how can we be sure that it is returning an accurate result? 
+\textsc{snitch} is designed so that not all six of the spectral features have to be provided for the code to return an inferred quenching history. This is a particularly useful feature if the user is unable to obtain or measure a certain spectral feature, if for example, measurements are being obtained from archival data or a feature lies outside of the wavelength range of their spectrum. 
+
+Users should note that quenching histories inferred given less inputs results in a larger uncertainty on the quoted best fit parameters returned by \textsc{snitch}. To quantify this we repeated the test described in Section~\ref{sec:precisiontest} six times, each time omitting one of the spectral features from the list of inputs. The mean uncertainties on the best fit for the 25 synthesised galaxy spectra returned when each spectral feature is omitted are quoted in Table~\ref{table:missingtestone}. 
+
+For further combinations of missing parameters, we suggest the user completes their own tests to determine how the quoted uncertainty will chance with the omission of more than one spectral feature. However, we do not recommend using \textsc{snitch} if the number of available spectral features is less than $4$. If this is the case, the number of inputs given to the code will be equal to or less than the number of parameters to be inferred and the results will become wildly unreliable. 
+
+\subsection{Testing accuracy}\label{sec:accuracytest}
+
+We have shown in the previous section that \textsc{snitch} is precise in returning known values for SFHs, however how can we be sure that it is returning an accurate result? 
 
 
 \subsection{Testing performance with different known SFHs}
 
 Obviously, not all galaxies will be accurately described by an exponentially quenching SFH. In special use cases (for example studying post starburst galaxies) a different SFH may be defined by the user by replacing the \texttt{expsfh} function with their own. 
 
-However, we have also tested how \textsc{starpies} behaves when known SFHs of different shapes to the exponentially quenching model it assumes are input. We tested a constant, burst, many burst, normal and log-normal models of SFH (see Figure~\ref{fig:differentSFHs}) all of which are often used in the literature to model simple SFHs. 
+However, we have also tested how \textsc{snitch} behaves when known SFHs of different shapes to the exponentially quenching model it assumes are input. We tested a constant, burst, many burst, normal and log-normal models of SFH (see Figure~\ref{fig:differentSFHs}) all of which are often used in the literature to model simple SFHs. 
 
-We found that \textsc{starpies} was always sensitive to the most recent epoch of star formation or quenching. For the constant SFR model, \textsc{starpies} returned a very recent $t_q$ and a very large $\tau$, i.e. a galaxy which has had constant SFR up until very recently at which point it started to decline very slowly. For the burst and many-burst models, \textsc{starpies} returns a constant SFR up until the peak of the last burst at which point quenching happens very rapidly. Similarly for the log normal and normal SFHs, \textsc{starpies} returns a best fit SFH with constant SFR until the peak of the normal and which point it declines at a rate comparable to the drop off of the Gaussian SFH. 
+We found that \textsc{snitch} was always sensitive to the most recent epoch of star formation or quenching. For the constant SFR model, \textsc{snitch} returned a very recent $t_q$ and a very large $\tau$, i.e. a galaxy which has had constant SFR up until very recently at which point it started to decline very slowly. For the burst and many-burst models, \textsc{snitch} returns a constant SFR up until the peak of the last burst at which point quenching happens very rapidly. Similarly for the log normal and normal SFHs, \textsc{snitch} returns a best fit SFH with constant SFR until the peak of the normal and which point it declines at a rate comparable to the drop off of the Gaussian SFH. 
 
 \begin{figure}
 \centering
 \includegraphics[width=0.475\textwidth]{../figures/different_SFHs_to_test.png}
-\caption{The shapes of the different known SFHs input into \textsc{starpies}.}
+\caption{The shapes of the different known SFHs input into \textsc{snitch}.}
 \label{fig:differentSFHs}
 \end{figure}
 
