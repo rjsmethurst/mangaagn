@@ -1,5 +1,5 @@
 \documentclass[useAMS,usenatbib]{mn2e}
-\usepackage{footnote,graphicx,natbib,color,multirow,amsmath,url,amssymb,tabularx,hyperref,amssymb, mathtools}
+\usepackage{footnote,graphicx,natbib,color,multirow,amsmath,url,amssymb,tabularx,hyperref,amssymb, mathtools, listings, float}
 \usepackage{aas_macros}
 
 \hypersetup{draft,
@@ -17,7 +17,7 @@
 
 \begin{document}
 
-\title[There's something about \textsc{starpies}]{There's something about STARPIES}
+\title[There's something about \textsc{starpies}]{Spectro Starponum: A simple, comparative SFH inference tool}
 \author[Smethurst et al. 2018]{R. ~J. ~Smethurst,$^{1}$ C. ~J. ~Lintott,$^{2}$ et al.
 \\ $^1$ School of Physics and Astronomy, The University of Nottingham, University Park, Nottingham, NG7 2RD, UK
 \\ $^2$ Oxford Astrophysics, Department of Physics, University of Oxford, Denys Wilkinson Building, Keble Road, Oxford, OX1 3RH, UK
@@ -26,7 +26,7 @@
 \maketitle
 
 \begin{abstract}
-We present \textsc{starpies}, an open source code writte in \emph{Python}, developed to infer a simple toy model of star formation history of a galaxy spectrum from the emission and absorption  features. \textsc{starpies} utilises FSPS, the MaNGA DAP and \emph{emcee} in order to provide the inferred $[Z, t_q, \tau]$ parameters with which to describe the exponentially declining quenching history of the input spectral features. This code was written for use on the MaNGA spectral data cubes but can be used for any scenario where a spectrum has been obtained, or spectral feature measurements have been provided. 
+We present \textsc{starpies}, an open source code written in \emph{Python}, developed to infer a simple toy model of star formation history of a galaxy spectrum from the emission and absorption features. \textsc{starpies} utilises FSPS, the MaNGA DAP and \emph{emcee} in order to provide the inferred $[Z, t_q, \tau]$ parameters with which to describe the exponentially declining quenching history of the input spectral features. This code was written for use on the MaNGA spectral data cubes but can be used for any scenario where a spectrum has been obtained, or spectral feature measurements have been provided. This code is not intended for an accurate inference of a single spectrum SFH but as a comparison of SFHs across many different spectra, either in an IFU scenario or across a galaxy population.
 \end{abstract}
 
 \begin{keywords}
@@ -37,11 +37,15 @@ software -- description
 
 Whilst there are many codes which provide a full spectral fit to a galaxy spectrum in order to determine its SFH, there are few providing a simpler, quicker inference of a toy model of star formation history (SFH). 
 
-Here we present an open source \emph{Python} software which can infer a simple toy model of SFH from the absorption and emission features of a galaxy (or IFU) spectrum. 
+Here we present an open source \emph{Python} software which uses Bayesian statistics and MCMC methods to infer a simple toy model of SFH from the absorption and emission features of a galaxy (or IFU) spectrum. 
 
-We describe our SFH model (Section~\ref{sec:sfh}) and our code, \textsc{starpies} through generation (Section~\ref{sec:fsps}) and spectral fit of synthetic spectra (Section~\ref{sec:dap}), using a Markov Chain Monte Carlo method (Section~\ref{sec:emcee}) and pruning methods (Section~\ref{sec:pruning}) outputs `best fit' parameters to describe the SFH in Section~\ref{sec:output}. We also describe the rigorous testing procedures applied to \textsc{starpies} in Section~\ref{sec:test}.   
+Herein we describe our SFH inference code, \textsc{starpies}, in Section~\ref{sec:code}, the expected output of the code in Section~\ref{sec:output}, along with the rigorous testing procedures applied to \textsc{starpies} in Section~\ref{sec:test}. Where necessary we adopt the Planck 2015 \citep{planck16} cosmological parameters with $(\Omega_m, \Omega_{\lambda}, h) = (0.31, 0.69e, 0.68)$. 
 
 \section{Description of Code}\label{sec:code}
+
+Simply put, \textsc{starpies} takes absorption and emission spectral features and their associated errors as inputs, assumes a simple SFH model and convolves it with a SPS to generate a synthetic spectra. These synthetic spectra are then fitted to give resulting prediced absorption and emission spectral features which the code uses to infer the best fit model using Bayesian statistics and MCMC methods given the spectral inputs. 
+
+We describe this process below, first defining our toy model of SFH, describing how we convolve this with SPS models to produce synthetic spectra (Section~\ref{sec:fsps}), how these spectra are then fitted to provide predicted model spectral features (Section~\ref{sec:dap}) and then how these are used to infer the best fit SFH given the input parameters (Section~\ref{sec:emcee}). 
 
 \subsection{Star Formation History Model}\label{sec:sfh}
 
@@ -55,13 +59,6 @@ I_{sfr}(t_q) \times exp{\left( \frac{-(t-t_{q})}{\tau}\right)} & \text{if } t > 
 \end{equation}
 where $t_{q}$ is the onset time of quenching, $\tau$ is the timescale over which the quenching occurs and $I_{sfr}$ is an initial constant star formation rate dependent on $t_q$.  A smaller $\tau$ value corresponds to a rapid quench, whereas a larger $\tau$ value corresponds to a slower quench. This model is clearly not a fully hydrodynamical simulation, it is a deliberately simple model built in order to test our understanding of the evolution of galaxy populations. This SFH model has previously been shown to appropriately characterise quenching galaxies \citep{weiner06, martin07, noeske07,schawinski14}. For galaxies which are still star forming, this model results in a constant SFR.
 
-Here, I assume that all galaxies formed at a time $t=0~\rm{Gyr}$ with an initial burst of star formation, $I_{sfr}(t_q)$. This initial constant star formation rate must be defined in order to ensure the `model' galaxy  has a reasonable stellar mass by $z\sim0$. This value will be dependent on the epoch at which quenching is modelled to occur, hence the dependence of this initial star formation rate on quenching time in Equation~\ref{sfh}. To tackle this problem, I looked to the literature; \citet[][Equation 1]{peng10} define a relation between the average specific SFR ($\rm{sSFR}=SFR/M_*$) and redshift by fitting to measurements of the mean sSFR of blue star forming galaxies from SDSS, zCOSMOS and literature values from \cite{elbaz07} and \cite{daddi07} measured at increasing redshifts with data from the GOODS survey:
-\begin{equation}\label{eq:peng}
-sSFR(m,t) = 2.5 \left( \frac{m}{10^{10} M_{\odot}} \right)^{-0.1} \left(\frac{t}{3.5 ~\rm{Gyr}}\right)^{-2.2} \rm{Gyr}^{-1}.
-\end{equation}
-Beyond $z \sim 2$ the characteristic SFR flattens and is roughly constant back to $z\sim6$. This flattening can be seen across similar observational data \citep{peng10, gonzalez10, bethermin12}; the cause is poorly understood but may reflect a physical limit to the sSFR of a galaxy. 
-
-
 \begin{figure*}
 \centering
 \includegraphics[width=\textwidth]{../figures/example_spectra_fit.pdf}
@@ -69,28 +66,76 @@ Beyond $z \sim 2$ the characteristic SFR flattens and is roughly constant back t
 \label{fig:spectrafit}
 \end{figure*}
 
+Here, I assume that all galaxies formed at a time $t=0~\rm{Gyr}$ with an initial burst of star formation, $I_{sfr}(t_q)$. This initial constant star formation rate must be defined in order to ensure the `model' galaxy  has a reasonable stellar mass by $z\sim0$. This value will be dependent on the epoch at which quenching is modelled to occur, hence the dependence of this initial star formation rate on quenching time in Equation~\ref{sfh}. To tackle this problem, I looked to the literature; \citet[][Equation 1]{peng10} define a relation between the average specific SFR ($\rm{sSFR}=SFR/M_*$) and redshift by fitting to measurements of the mean sSFR of blue star forming galaxies from SDSS, zCOSMOS and literature values from \cite{elbaz07} and \cite{daddi07} measured at increasing redshifts with data from the GOODS survey:
+\begin{equation}\label{eq:peng}
+sSFR(m,t) = 2.5 \left( \frac{m}{10^{10} M_{\odot}} \right)^{-0.1} \left(\frac{t}{3.5 ~\rm{Gyr}}\right)^{-2.2} \rm{Gyr}^{-1}.
+\end{equation}
+Beyond $z \sim 2$ the characteristic SFR flattens and is roughly constant back to $z\sim6$. This flattening can be seen across similar observational data \citep{peng10, gonzalez10, bethermin12}; the cause is poorly understood but may reflect a physical limit to the sSFR of a galaxy. 
+
 Motivated by these observations, the relation defined in \citet{peng10} is taken up to a cosmic time of $t=3~\rm{Gyr}$ ($z \sim 2.3$) and prior to this the value of the sSFR at $t=3~\rm{Gyr}$ is used. At the point of quenching, $t_{q}$, the SFH models are therefore defined to have an $I_{sfr}(t_q)$ which lies on this relationship for the sSFR, for a galaxy with mass, $m = 10^{10.27} M_{\odot}$. This choice of $I_{sfr}(t_q)$ is an important one, however does not impact on the predicted spectral features output by the model as it is merely a normalisation factor on the SFH. $[t_q, \tau]$, which set the shape of the SFH, and $Z$ which can affect the strength of a spectral feature are the crucial parameters.
 
 \subsection{Synthetic spectra generation}\label{sec:fsps}
 
+We then employ stellar population synthesis models (SPS) in order to construct synthetic spectra with the SFHs defined in Section~\ref{sec:sfh}. These synthetic spectra will be measured the same as an observed spectra (see Section~\ref{sec:dap}) in order to make a direct comparison using Bayesian statistics (see Section~\ref{sec:emcee}) to determine the `best fit' SFH model for a given spectral features input. 
 
-We then employ stellar population synthesis models (SPS) in order to construct synthetic spectra with known SFHs as defined in Section~\ref{sec:sfh}. 
+In order to derive a realistic synthetic spectra with our defined SFHs we utilised the Flexible Stellar Population Synthesis (FSPS) Model\footnote{\url{https://github.com/cconroy20/fsps}} code of \cite{conroy09, conroy10}, which is written in \texttt{FORTRAN}, in conjunction with an existing \emph{Python} wrapper\footnote{\url{http://dfm.io/python-fsps/current/}} by \cite{python_fsps}. SPS methods rely on stellar evolution calculations during all stages of stellar life, stellar spectral libraries, dust models and initial mass functions (IMFs) to translate the evolution of a hypothetical number of stars of varying ages and metallicities into a predicted integrated spectrum. FSPS also integrates \texttt{CLOUDY} \citep{ferland13} into its output so that stellar emission lines can also be synthesised along with a stellar continuum. 
 
+The FSPS Python wrapper makes it possible to generate spectra (or magnitudes) for any arbitrary stellar population in just two lines of \emph{Python} code. For example:
 
-\subsection{Measuring the synthetic spectral features}\label{sec:dap}
-
-\subsection{Choosing which spectral features to use}
+\begin{lstlisting}[language=Python]
+sp = fsps.StellarPopulation(
+	zmet=18, sfh=3, 
+	dust_type=2, imf_type=1,
+	add_neb_emission=True,  
+	add_dust_emission=True)
+sp.set_tabular_sfh(age = ages, sfr=sfrs)
+\end{lstlisting}
 
 \begin{figure*}
 \centering
 \includegraphics[width=\textwidth]{../figures/fsps_mangadap_D4000_MgFe_hbeta_hdeltaA_EWs_halpha_OII_one_t_one_Z.png}
-\caption{The variation of model spectral features across the logarithmically binned two dimensional $[t_q, \tau]$ parameter space measured at $t_{obs}=13.6\rm{Gyr}$ and solar metallicity, $Z=Z_{\odot}$. The features shown from left to right are the $D4000$, $H\beta$, $H\delta_A$ and $MgFe`$ spectral absorption indices and the equivalent width of both $H\alpha$ and $[OII]$ emission lines. This figure shows how each feature is sensitive to the changing SFH and how they can be used to break the degeneracies that plague photometric studies of SFH. }
+\caption{The variation of model spectral features across the logarithmically binned two dimensional $[t_q, \tau]$ parameter space measured at $t_{obs}=13.6\rm{Gyr}$ and solar metallicity, $Z=Z_{\odot}$. The features shown from left to right are the $\rm{D}4000$, $\rm{H}\beta$, $\rm{H}\delta_A$ and MgFe' spectral absorption indices and the equivalent width of both $H\alpha$ and $[OII]$ emission lines. This figure shows how each feature is sensitive to the changing SFH and how they can be used to break the degeneracies that plague photometric studies of SFH. }
 \label{fig:rainbow}
 \end{figure*}
 
+
+
+In \textsc{starpies} we set up the FSPS models to produce spectra using the Padova isochrones \citep{girardi02} and MILES spectral library \citep{vazdekis16} with nebular emission, emission from dust \cite{draineli07}, a \cite{chabrier03} IMF and a \cite{calzetti00} dust extinction curve. We also smooth the generated synthetic spectra to have the minimum velocity dispersion measurable by MaNGA, $77~\rm{km}~{s}^{-1}$ \citep{bundy15}. Spectra are generated for the 22 metalicities provided in the MILES models, ranging from $0.011~Z_{\odot}$ to $1.579~Z_{\odot}$ across a logarithmic age range spanning the Universe's history. FSPS does not allow for chemical enrichment of stellar birth material with time, i.e. the metallicity is kept constant for a given SFH at all epochs.\footnote{Whilst we could attempt to provide a feature to implement chemical enrichment into these models this would firstly be full of uncertainty (the propagation of which would be unquantifiable) and secondly move us out of the regime of a toy SFH model and into hydrodynamic simulation territory. } These spectra are generated across a 4-dimensional array in $[t_{obs}, Z, t_q, \tau]$in order to facilitate faster run time during inference (see Section~\ref{sec:emcee}).
+
+An example synthetic spectra generated with FSPS for solar metallicity, with a {\check $t_q~=~10~\rm{Gyr},~\tau~=~1.0~\rm{Gyr}$ observed at a redshift, $z=0.1$ (i.e. $t_{obs}=12.1~\rm{Gyr}$)} is shown by the solid black line in Figure~\ref{fig:spectrafit}.
+
+\subsection{Measuring the synthetic spectral features}\label{sec:dap}
+
+This code was originally developed for a specific science case using MaNGA IFU survey data \citep[an integral-field spectroscopic survey of 10,000 galaxies undertaken by the fourth phase of the Sloan Digital Sky Survey, SDSS-IV; ][]{bundy15}. We therefore wished to measure our synthetic spectra generated using FSPS (see Section~\ref{sec:fsps}) in the same way as the MaNGA data. It is for that reason that we use the functions defined in the MaNGA Data Analysis Pipeline \citep[DAP;][]{westfall18} version $2.0.2$ in order to measure the features in our synthetic spectra. If the user has a predefined method for measuring emission and absorption features in their spectra, the \texttt{measure\_spec} function in \textsc{starpies} can simply be adapted.
+
+The MaNGA DAP is described in full detail in \cite{westfall18}, however here we lay out the functions used in \textsc{starpies} to fit our synthetic spectra. Firstly we used pPXF \citep{cappellari04} to extract a fit of the stellar continuum of our synthetic spectra. Here we use the version of pPXF coded into the MaNGA DAP using the \texttt{PPXFFit} object and the MILES template spectral libraries. Secondly, we used the obtained stellar continuum to fit the emission line features in the spectra using the \texttt{Elric} object and the \texttt{"ELPFULL"} emission line database of 26 lines provided in the MaNGA DAP. This procedure provides emission line fluxes, equivalent widths, and kinematics from single component Gaussian fits. All strong lines are fit, as well as the Balmer series up to $\rm{H}\epsilon$ and other weaker lines. Finally, we then fit the absorption indices in our synthetic spectra using the \texttt{SpectralIndices} object and the \texttt{"EXTINDX"} index database of 42 indices provided in the MaNGA DAP. Spectral-index measurements including the $4000\AA$ break, $\rm{TiO}$ bandhead features and the full Lick system. All indices are measured at the MaNGA resolution (specified for each index) and corrections are provided to a nominal, $\sigma_v = 0$ measurement. The measurements of the Lick indices are provided by convolving the MaNGA data to the Lick resolution. 
+
+
+\subsection{Choosing which spectral features to use}
+
+Whilst there are many star formation sensitive spectral features used previously in the literature \citep{} here we adopted a from first principles approach. We observed how each of the 26 emission and 42 absorption features measured by the MaNGA DAP (see Section~\ref{sec:dap}), changed across the model parameter space $[Z, t_q, \tau]$ with time of observation to determine which spectral features were most sensitive to star formation rate, metallicity, time of observation etc. 
+
+We looked at plots similar to those shown in Figure~\ref{fig:rainbow} for all 26 emission features and 42 absorption features and selected the following features with which to infer the SFH:
+\begin{enumerate}[(i)]
+\item $\rm{EW}[H\alpha]$ as it is the most sensitive to current star formation rate
+
+\item $\rm{EW}[OII]$ as it is the most sensitive to stars that are $\sim 1~\rm{Gyr}$ old
+
+\item $\rm{D}4000$ as it is most sensitive to the age of the stellar population
+
+\item $\rm{H}\beta$ as it is most sensitive to the metallicity of the stellar population irrespective of the population age
+
+\item $\rm{H}\delta_A$ as it is the most sensitive to A-stars and therefore star formation that has been cut off abruptly in the recent past
+
+\item MgFe' as it is most sensitive to the metallicity of the stellar population irrespective of the current star formation rate
+\end{enumerate}
+
+Each of these features is measured in the synthetic to spectra in order for the input values to be compared to model values to find the best fit SFH. Not all six features need to be measured in a spectrum for \textsc{starpies} to run, although not providing one as input does restrict the accuracy to which a SFH can be inferred (see Section~\ref{sec:testremoval}). An estimate of the error on these measured values is also needed for \textsc{starpies} to run. 
+
+
 \subsection{Bayesian inference of SFH parameters}\label{sec:emcee}
 
-For the SFH problem at hand, using a Bayesian approach requires consideration of all possible combinations of the model parameters $\theta \equiv [Z, t_{q}, \tau]$ (the hypothesis in this instance). Assuming that all galaxies formed at $t=0~\rm{Gyr}$, we can assume that the `age' of a spectrum is equivalent to an observed time, $t^{obs}_{k}$. I then used this  `age' to calculate the \emph{predicted}, $p$, spectral features at this cosmic time for a given combination of $\theta$: $\overline{d}_{s,p}(\theta_k, t^{obs}_{k})$ for each of the six spectral features: $\rm{EW}[H\alpha]$, $\rm{EW}[OII]$, $D4000$, $H\beta$, $H\delta_A$ and $MgFe'$. The predicted spectral features can now directly be compared with input observed spectral features, so that for a single spectrum $k$ with features $\overline{d}_{k} = \{s_k\}$, with length $S$, the likelihood of a given model $P(d_{k}|\theta_k, t^{obs}_{k})$ to be:
+For the SFH problem at hand, using a Bayesian approach requires consideration of all possible combinations of the model parameters $\theta \equiv [Z, t_{q}, \tau]$ (the hypothesis in this instance). Assuming that all galaxies formed at $t=0~\rm{Gyr}$, we can assume that the `age' of a spectrum is equivalent to an observed time, $t^{obs}_{k}$. I then used this  `age' to calculate the \emph{predicted}, $p$, spectral features at this cosmic time for a given combination of $\theta$: $\vec{d}_{s,p}(\theta_k, t^{obs}_{k})$ for each of the six spectral features: $\rm{EW}[H\alpha]$, $\rm{EW}[OII]$, $\rm{D}4000$, $\rm{H}\beta$, $\rm{H}\delta_A$ and $MgFe'$. The predicted spectral features can now directly be compared with input observed spectral features, so that for a single spectrum $k$ with features $\vec{d}_{k} = \{s_k\}$, with length $S$, the likelihood of a given model $P(d_{k}|\theta_k, t^{obs}_{k})$ to be:
 
 
 % \begin{multline}\label{like}
@@ -98,12 +143,12 @@ For the SFH problem at hand, using a Bayesian approach requires consideration of
 % \end{multline}
 
 \begin{multline}\label{like}
-P(\overline{d}_{k}|\theta_k, t^{obs}_{k}) = \\ \prod_{s=1}^{S} \frac{1}{\sqrt{2\pi\sigma_{s, k}^2}} \exp{\left[ - \frac{(d_{s, k} - d_{s, p}(\theta_k, t_{k}^{obs}))^2}{\sigma_{s, k}^2} \right]}
+P(\vec{d}_{k}|\theta_k, t^{obs}_{k}) = \\ \prod_{s=1}^{S} \frac{1}{\sqrt{2\pi\sigma_{s, k}^2}} \exp{\left[ - \frac{(d_{s, k} - d_{s, p}(\theta_k, t_{k}^{obs}))^2}{\sigma_{s, k}^2} \right]}
 \end{multline}
 
-Here I have assumed that $P(d_{s, k}|\theta_k, t^{obs}_{k})$ are all independent of each other and that the errors on the observed features, $\sigma_{s, k}$, are also independent (a simplifying assumption but difficult to otherwise constrain). To obtain the probability of a combination of $\theta$ values given the data: $P(\theta_k|\overline{d}_k, t^{obs})$, i.e. how likely a single SFH model is  given the observed spectral features of a spectrum, I utilise Bayes' theorem as:
+Here I have assumed that $P(d_{s, k}|\theta_k, t^{obs}_{k})$ are all independent of each other and that the errors on the observed features, $\sigma_{s, k}$, are also independent (a simplifying assumption but difficult to otherwise constrain). To obtain the probability of a combination of $\theta$ values given the data: $P(\theta_k|\vec{d}_k, t^{obs})$, i.e. how likely a single SFH model is  given the observed spectral features of a spectrum, I utilise Bayes' theorem as:
  \begin{equation}\label{big}
-P(\theta_k|\overline{d}_k, t^{obs}) = \frac{P(\overline{d}_k|\theta_k, t^{obs})P(\theta_k)}{\int P(\overline{d}_k |\theta_k, t^{obs})P(\theta_k) d\theta_k}.
+P(\theta_k|\vec{d}_k, t^{obs}) = \frac{P(\vec{d}_k|\theta_k, t^{obs})P(\theta_k)}{\int P(\vec{d}_k |\theta_k, t^{obs})P(\theta_k) d\theta_k}.
 \end{equation}
 I assume a flat prior on the model parameters so that:
 \begin{equation}\label{prior}
@@ -120,17 +165,8 @@ MCMC allows for a more efficient exploration of the parameter space than a simpl
 
 For each run of \textsc{starpies}, the inference run is initialised with 100 walkers with a burn-in phase of 500 steps before a main run of 100 steps. Acceptance fractions for each walker are difficult to estimate due to the fact that walkers often get stuck in local minima during a run (see Section~\ref{sec:pruning} for more information). 
 
-I used the \emph{Python} programming language to code the routine outlined above into a package named \textsc{starpies} ~which has been released with an open source license. The required inputs for \textsc{starpies} to run on a single spectrum are at least one, if not all, of $\rm{EW}H\alpha$, $\rm{EW}[OII]$, $D4000$, $H\beta$, $H\delta_A$ and $MgFe`$ and their associated errors and the redshift, $z$. 
 
-
-\subsection{Pruning}\label{sec:pruning}
-
-After running \textsc{starpies} and upon inspection of the walker positions it became apparent that the walkers of \emph{emcee} would often get stuck in local minima. We therefore implemented a pruning method, as described in \cite{hou12}, in order to remove those walkers in local minima leaving only the global minima from which to derive inferred SFH parameters. The method outlined in \cite{hou12} is a simple one dimensional clustering method wherein the average negative log-likelihood for each walker is collected. This results in $L$ numbers:
-\begin{equation}
-\overline{l}_k = \frac{1}{T} \sum^{T}_{t=1} l(\vec{\theta}_k(t)|D),
-\end{equation}
-where T is the total number of steps each walker, $k$, takes. These $L$ numbers, $\overline{l}_k$ are therefore characteristic of the well which walker $k$ is in, so that walkers in the same well will have similar $\overline{l}_k$ (see Figure~\ref{fig:localminima} in which walkers are coloured by their characteristic $\overline{l}_{(k)}$ value). 
-
+\subsection{Pruning walkers stuck in local minima}\label{sec:pruning}
 
 \begin{figure}
 \centering
@@ -139,12 +175,6 @@ where T is the total number of steps each walker, $k$, takes. These $L$ numbers,
 \label{fig:localminima}
 \end{figure}
 
-The walkers are all then ranked in order of decreasing average log likelihood, $\overline{l}_{(k)}$, or increasing $- \log \overline{l}_{(k)}$. If there are big jumps in the $- \log \overline{l}_{(k)}$, these are easy to spot and are indicative of areas where walkers have got stuck in local minima.The difference in $- \log \overline{l}_{(k)}$ for every adjacent pair of walkers is then calculated. The first pair whose difference is a certain amount times bigger than the average difference previously is then identified like so:
-\begin{equation}
--\log \overline{l}_{(j+1)} + \log \overline{l}_{(j)} > Const − \frac{\log \overline{l}_{(j)} + log \overline{l}_{(1)}}{j - 1}.
-\end{equation}
-All the walkers with with $k>j$ are thrown away and only the ones with $k \leq j$ are kept after being identified as part of the global minimum. This can be seen in Figure~\ref{fig:comparepruning} wherein the walker positions at each step before pruning in the burn-in phase are shown in comparison to those after pruning in the main run stage.
-
 \begin{figure*}
 \centering
 \includegraphics[width=0.495\textwidth]{../figures/walkers_steps_burn_in_wihtout_pruning_25.pdf}
@@ -152,6 +182,19 @@ All the walkers with with $k>j$ are thrown away and only the ones with $k \leq j
 \caption{The positions traced by the \emph{emcee} walkers with step number (i.e. time) in each of the $[Z, t_q, \tau]$ dimensions during the burn in phase before pruning (left) and the post burn-in phase after pruning (right). The red lines show the known true values in each panel. Walkers have got stuck in local minima (see Figure±\ref{fig:localminima}) but some have managed to find the global minimum which can be seen more clearly in the right hand panels.}
 \label{fig:comparepruning}
 \end{figure*}
+
+After running \textsc{starpies} and upon inspection of the walker positions it became apparent that the walkers of \emph{emcee} would often get stuck in local minima. We therefore implemented a pruning method, as described in \cite{hou12}, in order to remove those walkers in local minima leaving only the global minima from which to derive inferred SFH parameters. The method outlined in \cite{hou12} is a simple one dimensional clustering method wherein the average negative log-likelihood for each walker is collected. This results in $L$ numbers:
+\begin{equation}
+\overline{l}_k = \frac{1}{T} \sum^{T}_{t=1} l(\vec{\theta}_k(t)|D),
+\end{equation}
+where T is the total number of steps each walker, $k$, takes. These $L$ numbers, $\overline{l}_k$ are therefore characteristic of the well which walker $k$ is in, so that walkers in the same well will have similar $\overline{l}_k$ (see Figure~\ref{fig:localminima} in which walkers are coloured by their characteristic $\overline{l}_{(k)}$ value). 
+
+
+The walkers are all then ranked in order of decreasing average log likelihood, $\overline{l}_{(k)}$, or increasing $- \log \overline{l}_{(k)}$. If there are big jumps in the $- \log \overline{l}_{(k)}$, these are easy to spot and are indicative of areas where walkers have got stuck in local minima.The difference in $- \log \overline{l}_{(k)}$ for every adjacent pair of walkers is then calculated. The first pair whose difference is a certain amount times bigger than the average difference previously is then identified like so:
+\begin{equation}
+-\log \overline{l}_{(j+1)} + \log \overline{l}_{(j)} > Const − \frac{\log \overline{l}_{(j)} + log \overline{l}_{(1)}}{j - 1}.
+\end{equation}
+All the walkers with with $k>j$ are thrown away and only the ones with $k \leq j$ are kept after being identified as part of the global minimum. This can be seen in Figure~\ref{fig:comparepruning} wherein the walker positions at each step before pruning in the burn-in phase are shown in comparison to those after pruning in the main run stage.
 
 
 \section{Output of Code}\label{sec:output}
@@ -165,12 +208,11 @@ The burn-in and main run walker positions and posterior probabilities at each st
 \label{fig:output}
 \end{figure*}
 
+I used the \emph{Python} programming language to code the routine outlined in Section~\ref{sec:code} into a package named \textsc{starpies} ~which has been released with an open source license. The required inputs for \textsc{starpies} to run on a single spectrum are at least one, if not all, of $\rm{EW}H\alpha$, $\rm{EW}[OII]$, $\rm{D}4000$, $\rm{H}\beta$, $\rm{H}\delta_A$ and MgFe' and their associated errors and the spectrum redshift, $z$. 
 
 \section{Testing}\label{sec:test}
 
 \subsection{Testing precision}
-
-In order to test that \textsc{starpies} can find the correct quenched SFH model for a given set of spectral features, 25 synthesised galaxy spectra were created with known SFHs (i.e. known values of $\theta = [Z, t_q, \tau]$) from which spectral features were generated using the FSPS models (see Section~\ref{sec:fsps}. These were input into \textsc{starpies} to test whether the known values of $\theta$ were reproduced, within error, for each of the 25 synthesised galaxies. Figure~\ref{fig:test_mosaic} shows the results for each of these synthesised galaxies, with the known values of $\theta$ shown by the red lines. In only one case for the $\tau$ parameter this red line does not fall within the 16th and 84th percentile values shown by the blue dashed lines (see bottom right panel). However, on inspection, this SFH was a constant SFR that had not yet quenched and so the posterior probability function returned for the $\tau$ parameter is very broad as \textsc{starpies} does not have any information with which to constrain this parameter. In all cases the intersection of the red lines (i.e. the known or true values input) resides within the parameter space explored by the walkers left over after pruning, which trace the global minimum of the posterior probability. Therefore \textsc{starpies} succeeds in precisely locating the true parameter values within the degeneracies of the SFH model for known values. 
 
 \begin{figure*}
 \centering
@@ -179,9 +221,16 @@ In order to test that \textsc{starpies} can find the correct quenched SFH model 
 \label{fig:test_mosaic}
 \end{figure*}
 
+
+In order to test that \textsc{starpies} can find the correct quenched SFH model for a given set of spectral features, 25 synthesised galaxy spectra were created with known SFHs (i.e. known values of $\theta = [Z, t_q, \tau]$) from which spectral features were generated using the FSPS models (see Section~\ref{sec:fsps}. These were input into \textsc{starpies} to test whether the known values of $\theta$ were reproduced, within error, for each of the 25 synthesised galaxies. Figure~\ref{fig:test_mosaic} shows the results for each of these synthesised galaxies, with the known values of $\theta$ shown by the red lines. In only one case for the $\tau$ parameter this red line does not fall within the 16th and 84th percentile values shown by the blue dashed lines (see bottom right panel). However, on inspection, this SFH was a constant SFR that had not yet quenched and so the posterior probability function returned for the $\tau$ parameter is very broad as \textsc{starpies} does not have any information with which to constrain this parameter. In all cases the intersection of the red lines (i.e. the known or true values input) resides within the parameter space explored by the walkers left over after pruning, which trace the global minimum of the posterior probability. Therefore \textsc{starpies} succeeds in precisely locating the true parameter values within the degeneracies of the SFH model for known values. 
+
+
+\subsection{Testing precision when less spectral information provided}
+
 \subsection{Testing accuracy}
 
 We have shown in the previous section that \textsc{starpies} is precise in returning known values for SFHs, however how can we be sure that it is returning an accurate result? 
+
 
 \subsection{Testing performance with different known SFHs}
 

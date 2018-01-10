@@ -1,3 +1,4 @@
+ \newcommand{\noop}[1]{}
 \begin{thebibliography}{}
 
 \bibitem[\protect\citeauthoryear{{B{\'e}thermin}, {Daddi}, {Magdis}, {Sargent},
@@ -8,6 +9,30 @@
    {Elbaz} D.,  {Le Borgne} D.,  {Mullaney} J.,  {Pannella} M.,  {Buat} V.,
   {Charmandaris} V.,  {Lagache} G.,    {Scott} D.,  2012, \apjl, 757, L23
 
+\bibitem[\protect\citeauthoryear{{Bundy} \& {et al.}}{{Bundy} \& {et
+  al.}}{2015}]{bundy15}
+{Bundy} K.,  {et al.} 2015, \apj, 798, 7
+
+\bibitem[\protect\citeauthoryear{{Calzetti}, {Armus}, {Bohlin}, {Kinney},
+  {Koornneef} \& {Storchi-Bergmann}}{{Calzetti} et~al.}{2000}]{calzetti00}
+{Calzetti} D.,  {Armus} L.,  {Bohlin} R.~C.,  {Kinney} A.~L.,  {Koornneef} J.,
+    {Storchi-Bergmann} T.,  2000, \apj, 533, 682
+
+\bibitem[\protect\citeauthoryear{{Cappellari} \& {Emsellem}}{{Cappellari} \&
+  {Emsellem}}{2004}]{cappellari04}
+{Cappellari} M.,  {Emsellem} E.,  2004, \pasp, 116, 138
+
+\bibitem[\protect\citeauthoryear{{Chabrier}}{{Chabrier}}{2003}]{chabrier03}
+{Chabrier} G.,  2003, \pasp, 115, 763
+
+\bibitem[\protect\citeauthoryear{{Conroy} \& {Gunn}}{{Conroy} \&
+  {Gunn}}{2010}]{conroy10}
+{Conroy} C.,  {Gunn} J.~E.,  2010, \apj, 712, 833
+
+\bibitem[\protect\citeauthoryear{{Conroy}, {Gunn} \& {White}}{{Conroy}
+  et~al.}{2009}]{conroy09}
+{Conroy} C.,  {Gunn} J.~E.,    {White} M.,  2009, \apj, 699, 486
+
 \bibitem[\protect\citeauthoryear{{Daddi}, {Dickinson}, {Morrison}, {Chary},
   {Cimatti}, {Elbaz}, {Frayer}, {Renzini}, {Pope}, {Alexander}, {Bauer},
   {Giavalisco}, {Huynh}, {Kurk} \& {Mignoli}}{{Daddi} et~al.}{2007}]{daddi07}
@@ -15,6 +40,10 @@
   {Elbaz} D.,  {Frayer} D.,  {Renzini} A.,  {Pope} A.,  {Alexander} D.~M.,
   {Bauer} F.~E.,  {Giavalisco} M.,  {Huynh} M.,  {Kurk} J.,    {Mignoli} M.,
   2007, \apj, 670, 156
+
+\bibitem[\protect\citeauthoryear{{Draine} \& {Li}}{{Draine} \&
+  {Li}}{2007}]{draineli07}
+{Draine} B.~T.,  {Li} A.,  2007, \apj, 657, 810
 
 \bibitem[\protect\citeauthoryear{{Elbaz}, {Daddi}, {Le Borgne}, {Dickinson},
   {Alexander}, {Chary}, {Starck}, {Brandt}, {Kitzbichler}, {MacDonald},
@@ -24,10 +53,27 @@
   {MacDonald} E.,  {Nonino} M.,  {Popesso} P.,  {Stern} D.,    {Vanzella} E.,
   2007, \aap, 468, 33
 
+\bibitem[\protect\citeauthoryear{{Ferland}, {Porter}, {van Hoof}, {Williams},
+  {Abel}, {Lykins}, {Shaw}, {Henney} \& {Stancil}}{{Ferland}
+  et~al.}{2013}]{ferland13}
+{Ferland} G.~J.,  {Porter} R.~L.,  {van Hoof} P.~A.~M.,  {Williams} R.~J.~R.,
+  {Abel} N.~P.,  {Lykins} M.~L.,  {Shaw} G.,  {Henney} W.~J.,    {Stancil}
+  P.~C.,  2013, \rmxaa, 49, 137
+
 \bibitem[\protect\citeauthoryear{{Foreman-Mackey}, {Hogg}, {Lang} \&
   {Goodman}}{{Foreman-Mackey} et~al.}{2013}]{emcee13}
 {Foreman-Mackey} D.,  {Hogg} D.~W.,  {Lang} D.,    {Goodman} J.,  2013, \pasp,
   125, 306
+
+\bibitem[\protect\citeauthoryear{Foreman-Mackey, Sick \&
+  Johnson}{Foreman-Mackey et~al.}{2014}]{python_fsps}
+Foreman-Mackey D.,  Sick J.,    Johnson B.,  2014, 10.5281/zenodo.12157
+
+\bibitem[\protect\citeauthoryear{{Girardi}, {Bertelli}, {Bressan}, {Chiosi},
+  {Groenewegen}, {Marigo}, {Salasnich} \& {Weiss}}{{Girardi}
+  et~al.}{2002}]{girardi02}
+{Girardi} L.,  {Bertelli} G.,  {Bressan} A.,  {Chiosi} C.,  {Groenewegen}
+  M.~A.~T.,  {Marigo} P.,  {Salasnich} B.,    {Weiss} A.,  2002, \aap, 391, 195
 
 \bibitem[\protect\citeauthoryear{{Gonz{\'a}lez}, {Labb{\'e}}, {Bouwens},
   {Illingworth}, {Franx}, {Kriek} \& {Brammer}}{{Gonz{\'a}lez}
@@ -67,6 +113,13 @@
   al.}}{2010}]{peng10}
 {Peng} Y.-j.,  {et al.} 2010, \apj, 721, 193
 
+\bibitem[\protect\citeauthoryear{{Planck Collaboration}, {Ade}, {Aghanim},
+  {Arnaud}, {Ashdown}, {Aumont}, {Baccigalupi}, {Banday}, {Barreiro},
+  {Bartlett} \& et al.}{{Planck Collaboration} et~al.}{2016}]{planck16}
+{Planck Collaboration} {Ade} P.~A.~R.,  {Aghanim} N.,  {Arnaud} M.,  {Ashdown}
+  M.,  {Aumont} J.,  {Baccigalupi} C.,  {Banday} A.~J.,  {Barreiro} R.~B.,
+  {Bartlett} J.~G.,    et al. 2016, \aap, 594, A13
+
 \bibitem[\protect\citeauthoryear{{Schawinski}, {Urry}, {Simmons}, {Fortson},
   {Kaviraj}, {Keel}, {Lintott}, {Masters}, {Nichol}, {Sarzi}, {Skibba},
   {Treister}, {Willett}, {Wong} \& {Yi}}{{Schawinski}
@@ -85,11 +138,19 @@
   K.~L.,  {Melvin} T.,  {Nichol} R.~C.,  {Skibba} R.~A.,    {Willett} K.~W.,
   2015, \mnras, 450, 435
 
+\bibitem[\protect\citeauthoryear{{Vazdekis}, {Koleva}, {Ricciardelli},
+  {R{\"o}ck} \& {Falc{\'o}n-Barroso}}{{Vazdekis} et~al.}{2016}]{vazdekis16}
+{Vazdekis} A.,  {Koleva} M.,  {Ricciardelli} E.,  {R{\"o}ck} B.,
+  {Falc{\'o}n-Barroso} J.,  2016, \mnras, 463, 3409
+
 \bibitem[\protect\citeauthoryear{{Weiner}, {Willmer}, {Faber}, {Harker},
   {Kassin}, {Phillips}, {Melbourne}, {Metevier}, {Vogt} \& {Koo}}{{Weiner}
   et~al.}{2006}]{weiner06}
 {Weiner} B.~J.,  {Willmer} C.~N.~A.,  {Faber} S.~M.,  {Harker} J.,  {Kassin}
   S.~A.,  {Phillips} A.~C.,  {Melbourne} J.,  {Metevier} A.~J.,  {Vogt} N.~P.,
     {Koo} D.~C.,  2006, \apj, 653, 1049
+
+\bibitem[\protect\citeauthoryear{{Westfall}}{{Westfall}}{prep}]{westfall18}
+{Westfall} K.,  \noop{3018}{in prep.}, \apj
 
 \end{thebibliography}
