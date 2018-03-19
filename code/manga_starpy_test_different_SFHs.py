@@ -366,6 +366,7 @@ for n in range(len(sfhs)):
     plt.legend(frameon=False)
     plt.xlabel('time [Gyr]')
     plt.ylabel(r'normalised SFR')
+    plt.ylim(0,1.1)
     plt.tight_layout()
     plt.savefig('./test_diff_SFH/compare_actual_inferred_different_SFHs_'+order[n]+'.png')
 
