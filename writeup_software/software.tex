@@ -2,7 +2,7 @@
 \usepackage{footnote,graphicx,natbib,color,multirow,amsmath,url,amssymb,tabularx,hyperref,amssymb, mathtools, listings, float}
 \usepackage{aas_macros}
 
-\hypersetup{draft,
+\hypersetup{
     colorlinks,
     citecolor=blue,
     filecolor=black,
@@ -18,15 +18,16 @@
 \begin{document}
 
 \title[\textsc{snitch}: inferring quenching histories]{SNITCH: Seeking a simple, comparative star formation history inference tool}
-\author[Smethurst et al. 2018]{R. ~J. ~Smethurst,$^{1}$  et al.
+\author[Smethurst et al. 2018]{R. ~J. ~Smethurst,$^{1}$ M.~Merrifield,$^{1}$ C. ~J. ~Lintott,$^{2}$ K.~L.~Masters,$^{3}$ \newauthor A.~Fraser-McKelvie,$^{1}$ A. Arag\'on-Salamanca,$^{1}$ et al.
 \\ $^1$ School of Physics and Astronomy, The University of Nottingham, University Park, Nottingham, NG7 2RD, UK
-% \\ $^2$ Oxford Astrophysics, Department of Physics, University of Oxford, Denys Wilkinson Building, Keble Road, Oxford, OX1 3RH, UK
+\\ $^2$ Oxford Astrophysics, Department of Physics, University of Oxford, Denys Wilkinson Building, Keble Road, Oxford, OX1 3RH, UK
+\\ $^3$ Institute of Cosmology and Gravitation, University of Portsmouth, Dennis Sciama Building, Barnaby Road, Portsmouth, PO13FX, UK
 }
 
 \maketitle
 
 \begin{abstract}
-We present \textsc{snitch}, an open source code written in \emph{Python}, developed to infer a simple toy model of the star formation history of a galaxy spectrum from the emission and absorption features. \textsc{snitch} utilises FSPS, the MaNGA DAP and \emph{emcee} in order to infer the $[Z, t_q, \log \tau]$ parameters which best  describe an exponentially declining quenching history to fit the input spectral features. This code was written for use on the MaNGA spectral data cubes but is customisable by a user so that it can be used for any scenario where a galaxy spectrum has been obtained, or spectral feature measurements have been provided. This code is not intended for an accurate inference of a single spectrum SFH but as a comparison of SFHs across many different spectra, either for IFU data or across a large galaxy sample.
+We present \textsc{snitch}, an open source code written in \emph{Python}, developed to quickly infer the parameters describing a simple model of the quenching star formation history of a galaxy spectrum from the emission and absorption features. \textsc{snitch} utilises FSPS, the MaNGA DAP and \emph{emcee} in order to infer the $[Z, t_q, \log \tau]$ parameters which best describe an exponentially declining quenching history best fit to the set of input spectral absorption and emission features. This code was written for use on the MaNGA spectral data cubes but is customisable by a user so that it can be used for any scenario where a galaxy spectrum has been obtained, or spectral feature measurements have been provided. This code is not intended for an accurate inference of a single spectrum evolutionary history but as a comparison of star formation history parameters across many different spectra, either for IFU data or across a large galaxy sample.
 \end{abstract}
 
 \begin{keywords}
@@ -35,33 +36,21 @@ software -- description
 
 \section{Introduction}
 
-Whilst there are many publicly available codes which provide a full spectral fit to a galaxy spectrum in order to determine its star formation history (SFH), there are few providing a simpler, quicker inference of a toy model of SFH for comparative studies. 
+Whilst there are many publicly available codes which provide a full spectral fit to a galaxy spectrum in order to determine its star formation history \citep[SFH;][]{cappellari04, cidfernandes05, ocvirk06, tojeiro07, noll09, conroy14, chevallard16, wilkinson17}, there are few providing a simpler, quicker inference of the most likely SFH using only specific spectral features. Although determining evolutionary histories with full spectral fitting utilises all the information available from an observation, (i) the process is often time consuming, (ii) parts of the spectrum will usually be redundant in certain science cases, and (iii) uncertain or low signal-to-noise parts of the spectrum can disrupt the full spectrum fit. 
 
-Here we present an open source \emph{Python} software which uses Bayesian statistics and MCMC methods to infer a simple toy model of SFH from the absorption and emission features of a galaxy (or IFU) spectrum. 
+Here we present an open source \emph{Python} software, \textsc{snitch}, which uses Bayesian statistics and MCMC methods to quickly infer parameters describing a quenching SFH using only a set of five star formation, age or metallicity sensitive absorption and emission features of a galaxy (or integral field unit; IFU) spectrum. This code has been developed originally for use with MaNGA IFU spectral data however can be used for any spectra where measurements of the absorption and emission features are possible (or perhaps even already available). 
+
+In particular \textsc{snitch} has been developed to study the quenching histories within spatially resolved regions of MaNGA galaxies, therefore we have defined a physically motivated SFH model parametrised by the time and rate that quenching occurs (again, this may be customised by a user depending on the specific science case). With this choice of SFH model, \textsc{snitch} is best suited to deriving the SFH parameters across a large sample of galaxy or IFU spectra in order to compare differences across the population. We do not recommend using \textsc{snitch} in order to quote the SFH parameters of a single spectrum only.  
 
 %QUIDDITCH: QUenching hIstory Determination with absorption inDices and emIssion lines using bayesian TeCHniques
 
 %QUIDDITCH: QUenching Investigations with Data-Driven Inference TeCHniques
 
-Herein we describe our SFH inference code, \textsc{snitch} (bayeSian iNference, given emIssion and absorpTion features, of quenChing Histories), in Section~\ref{sec:code}, the expected output of the code in Section~\ref{sec:output}, along with the rigorous testing procedures applied to \textsc{snitch} in Section~\ref{sec:test}. Where necessary we adopt the Planck 2015 \citep{planck16} cosmological parameters with $(\Omega_m, \Omega_{\lambda}, h) = (0.31, 0.69, 0.68)$. 
+Herein we describe \textsc{snitch} in Section~\ref{sec:code}, the expected output of the code in Section~\ref{sec:output}, along with the rigorous testing procedures applied to \textsc{snitch} in Section~\ref{sec:test}. Where necessary we adopt the Planck 2015 \citep{planck16} cosmological parameters with $(\Omega_m, \Omega_{\lambda}, h) = (0.31, 0.69, 0.68)$. 
 
 \section{Description of Code}\label{sec:code}
 
-As a black box, \textsc{snitch} takes absorption and emission spectral features and their associated errors as inputs, assumes a simple SFH model and convolves it with a SPS to generate a synthetic spectra. These synthetic spectra are then fitted to give resulting predicted absorption and emission spectral features which the code uses to infer the best fit model using Bayesian statistics and MCMC methods. 
-
-We describe this process below, first defining our toy model of SFH, describing how we convolve this with SPS models to produce synthetic spectra (Section~\ref{sec:fsps}), how these spectra are then fitted to provide predicted model spectral features (Section~\ref{sec:dap}) and then how these are used to infer the best fit SFH given the input parameters (Section~\ref{sec:emcee}). 
-
-\subsection{Star Formation History Model}\label{sec:sfh}
-
-The SFH used in this code was first described in \cite{smethurst15}. We have reproduced its description here. The quenched star formation history of a galaxy can be simply modelled as an exponentially declining star formation rate (SFR) across cosmic time as:
-\begin{equation}\label{sfh}
-SFR =
-\begin{cases}
-I_{sfr}(t_q) & \text{if } t \leq t_q \\
-I_{sfr}(t_q) \times exp{\left( \frac{-(t-t_{q})}{\tau}\right)} & \text{if } t > t_q 
-\end{cases}
-\end{equation}
-where $t_{q}$ is the onset time of quenching, $\tau$ is the timescale over which the quenching occurs and $I_{sfr}$ is an initial constant star formation rate dependent on $t_q$.  A smaller $\tau$ value corresponds to a rapid quench, whereas a larger $\tau$ value corresponds to a slower quench. This model is clearly not a fully hydrodynamical simulation, it is a deliberately simple model built in order to test our understanding of the evolution of galaxy, or stellar, populations. This SFH model has previously been shown to appropriately characterise quenching galaxies \citep{weiner06, martin07, noeske07,schawinski14}. For galaxies which are still star forming, this model results in a constant SFR.
+As a black box, \textsc{snitch} takes absorption and emission spectral features and their associated errors as inputs, assumes a quenching SFH model and convolves it with a SPS to generate a synthetic spectra. The predicted absorption and emission spectral features are then measured in these synthetic spectra which the code then uses to infer the best fit model using Bayesian statistics and MCMC methods. 
 
 \begin{figure*}
 \centering
@@ -70,6 +59,22 @@ where $t_{q}$ is the onset time of quenching, $\tau$ is the timescale over which
 \label{fig:spectrafit}
 \end{figure*}
 
+We describe this process below, first defining our simple model of SFH, describing how we convolve this with SPS models to produce synthetic spectra (Section~\ref{sec:fsps}), how these spectra are then measured to provide predicted model spectral features (Section~\ref{sec:dap}) and then how these are used to infer the best fit SFH given the input parameters (Section~\ref{sec:emcee}). 
+
+\subsection{Star Formation History Model}\label{sec:sfh}
+
+The parametrised quenching SFH used by \textsc{snitch} was first described in \cite{smethurst15} for use in the \textsc{starpy} code\footnote{\textsc{starpy} is the precursor to \textsc{snitch}, performing a similar inference of a quenching star formation history using only an optical and near-ultraviolet colour. The code is publicly available here: \url{https://github.com/zooniverse/starpy}}. We have reproduced its description here. The quenching star formation history of a galaxy can be simply modelled as an exponentially declining star formation rate (SFR) across cosmic time as:
+\begin{equation}\label{sfh}
+SFR =
+\begin{cases}
+I_{sfr}(t_q) & \text{if } t \leq t_q \\
+I_{sfr}(t_q) \times exp{\left( \frac{-(t-t_{q})}{\tau}\right)} & \text{if } t > t_q 
+\end{cases}
+\end{equation}
+where $t_{q}$ is the onset time of quenching, $\tau$ is the timescale over which the quenching occurs and $I_{sfr}$ is an initial constant star formation rate dependent on $t_q$.  A smaller $\tau$ value corresponds to a rapid quench, whereas a larger $\tau$ value corresponds to a slower quench. This model is clearly not a fully hydrodynamical simulation, it is a deliberately simple model built in order to test our understanding of the evolution of galaxy, or stellar, populations. This SFH model has previously been shown to appropriately characterise quenching galaxies \citep{weiner06, martin07, noeske07,schawinski14, smethurst15}. For galaxies which are still star forming, this model assumes a constant SFR.
+
+
+
 Here, we assume that all galaxies formed at a time $t=0~\rm{Gyr}$ with an initial burst of star formation, $I_{sfr}(t_q)$. This initial constant star formation rate must be defined in order to ensure the `model' galaxy  has a reasonable stellar mass by $z\sim0$. This value will be dependent on the epoch at which quenching is modelled to occur, hence the dependence of this initial star formation rate on quenching time in Equation~\ref{sfh}. 
 
 \citet[][Equation 1]{peng10} define a relation between the average specific SFR ($\rm{sSFR}=SFR/M_*$) and redshift by fitting to measurements of the mean sSFR of blue star forming galaxies from SDSS, zCOSMOS and literature values from \cite{elbaz07} and \cite{daddi07} measured at increasing redshifts with data from the GOODS survey:
@@ -77,6 +82,13 @@ Here, we assume that all galaxies formed at a time $t=0~\rm{Gyr}$ with an initia
 sSFR(m,t) = 2.5 \left( \frac{m}{10^{10} M_{\odot}} \right)^{-0.1} \left(\frac{t}{3.5 ~\rm{Gyr}}\right)^{-2.2} \rm{Gyr}^{-1}.
 \end{equation}
 Beyond $z \sim 2$ the characteristic sSFR flattens and is roughly constant back to $z\sim6$. This flattening can be seen across similar observational data \citep{peng10, gonzalez10, bethermin12}; the cause is poorly understood but may reflect a physical limit to the sSFR of a galaxy. 
+
+\begin{figure*}
+\centering
+\includegraphics[width=\textwidth]{../figures/fsps_rainbow_spectral_features.pdf}
+\caption{The variation of model spectral features across the logarithmically binned two dimensional $[t_q, \log \tau]$ parameter space measured at $t_{obs}=13.8~\rm{Gyr}$ and solar metallicity, $Z=Z_{\odot}$. The features shown from left to right are the equivalent width of the $H\alpha$ emission line and the spectral absorption indices $\rm{H}\beta$, MgFe', $\rm{H}\delta_A$ and $\rm{D}_n4000$,. Note that when a model is no longer star forming, the fitting code cannot measure an equivalent width of $H\alpha$ therefore these values are masked out in the bottom left corner of the left panel. This figure shows how each feature is sensitive to the changing SFH and how they can be used to break the degeneracies that plague photometric studies of SFH. }
+\label{fig:rainbow}
+\end{figure*}
 
 Motivated by these observations, the relation defined in \citet{peng10} is taken up to a cosmic time of $t=3~\rm{Gyr}$ ($z \sim 2.3$) and prior to this the value of the sSFR at $t=3~\rm{Gyr}$ is used. At the point of quenching, $t_{q}$, the SFH models are therefore defined to have an $I_{sfr}(t_q)$ which lies on this relationship for the sSFR, for a galaxy with mass, $m = 10^{10.27} M_{\odot}$. This choice of $I_{sfr}(t_q)$ is an important one to produce realistic synthetic galaxy properties, however does not impact on the predicted spectral features output by the model as it is merely a normalisation factor on the SFH. The SFH parameters $[t_q, \log \tau]$, which set the shape of the SFH, and the metallicity, $Z$, which can affect the strength of a spectral feature, are the crucial parameters.
 
@@ -98,16 +110,8 @@ The FSPS Python wrapper makes it possible to generate spectra (or magnitudes) fo
 % sp.set_tabular_sfh(age = ages, sfr=sfrs)
 % \end{lstlisting}
 
-\begin{figure*}
-\centering
-\includegraphics[width=\textwidth]{../figures/fsps_rainbow_spectral_features.pdf}
-\caption{The variation of model spectral features across the logarithmically binned two dimensional $[t_q, \log \tau]$ parameter space measured at $t_{obs}=13.8~\rm{Gyr}$ and solar metallicity, $Z=Z_{\odot}$. The features shown from left to right are the equivalent width of the $H\alpha$ emission line and the spectral absorption indices $\rm{H}\beta$, MgFe', $\rm{H}\delta_A$ and $\rm{D}_n4000$,. Note that when a model is no longer star forming, the fitting code cannot measure an equivalent width of $H\alpha$ therefore these values are masked out in the bottom left corner of the left panel. This figure shows how each feature is sensitive to the changing SFH and how they can be used to break the degeneracies that plague photometric studies of SFH. }
-\label{fig:rainbow}
-\end{figure*}
 
-
-
-In \textsc{snitch} we set up the FSPS models to produce spectra using the Padova isochrones \citep{girardi02} and MILES spectral library \citep{vazdekis16} with nebular emission, emission from dust \cite{draineli07}, a \cite{chabrier03} IMF and a \cite{calzetti00} dust extinction curve. We also smooth the generated synthetic spectra to have the minimum velocity dispersion measurable by MaNGA, $77~\rm{km}~{s}^{-1}$ \citep{bundy15}. Spectra are generated for the 22 metalicities provided in the MILES models, ranging from $0.011~Z_{\odot}$ to $1.579~Z_{\odot}$ across a logarithmic age range spanning the Universe's history. FSPS does not allow for chemical enrichment of stellar birth material with time, i.e. the metallicity is kept constant for a given SFH at all epochs.\footnote{Whilst we could attempt to provide a feature to implement chemical enrichment into these models this would firstly be full of uncertainty (the propagation of which would be unquantifiable) and secondly move us out of the regime of a toy SFH model and into hydrodynamic simulation territory. } These spectra are generated across a logarithmically spaced 4-dimensional array in $[t_{obs},~Z,~t_q,~\tau]$ in order to facilitate faster run time during inference (see Section~\ref{sec:emcee}).
+In \textsc{snitch} we set up the FSPS models to produce spectra using the Padova isochrones \citep{girardi02} and MILES spectral library \citep{vazdekis16} with nebular emission, emission from dust \cite{draineli07}, a \cite{chabrier03} IMF and a \cite{calzetti00} dust extinction curve. We also smooth the generated synthetic spectra to have the minimum velocity dispersion measurable by MaNGA, $77~\rm{km}~{s}^{-1}$ \citep{bundy15}. Spectra are generated for the 22 metalicities provided in the MILES models, ranging from $0.011~Z_{\odot}$ to $1.579~Z_{\odot}$ across a logarithmic age range spanning the Universe's history. FSPS does not allow for chemical enrichment of stellar birth material with time, i.e. the metallicity is kept constant for a given SFH at all epochs.\footnote{Whilst we could attempt to provide a feature to implement chemical enrichment into these models this would firstly be full of uncertainty (the propagation of which would be unquantifiable) and secondly move us out of the regime of a simple SFH model and into hydrodynamic simulation territory. } These spectra are generated across a logarithmically spaced 4-dimensional array in $[t_{obs},~Z,~t_q,~\tau]$ in order to facilitate faster run time during inference (see Section~\ref{sec:emcee}).
 
 Two example synthetic spectra generated with FSPS for solar metallicity are shown by the solid black line in Figure~\ref{fig:spectrafit}. Note that FSPS generates spectra with flux units $L_{\odot}~\rm{Hz}^{-1}$, but that our fitting procedure (see Section~\ref{sec:dap}) requires the flux in units of $\rm{\AA}^{-1}$. The fits are shown by the red dashed line for a spectra which has already quenched with $[Z,~t_q,~\tau] = [1~Z_{\odot},~11.5~\rm{Gyr},~0.1~\rm{Gyr}]$ and by the blue dashed line for a spectra which still has some residual star formation $[Z,~t_q,~\tau] = [1~Z_{\odot},~10.0~\rm{Gyr},~1.0~\rm{Gyr}]$ both observed at a redshift, $z=0.1$ (i.e. $t_{obs}=12.1~\rm{Gyr}$). 
 
@@ -120,9 +124,9 @@ The MaNGA DAP is described in full detail in \cite{westfall18}, however here we 
 
 \subsection{Choosing which spectral features to use}
 
-Whilst there are many star formation sensitive spectral features used previously in the literature \citep{ref} here we adopted a from first principles approach. We observed how each of the 26 emission and 42 absorption features measured by the MaNGA DAP (see Section~\ref{sec:dap}), changed across the model parameter space $[Z, t_q, \log \tau]$ with time of observation to determine which spectral features were most sensitive to star formation rate, metallicity, time of observation etc. 
+Whilst there are many star formation sensitive spectral features used previously in the literature \citep[see comprehensive review by][]{kennevans12} here we adopted a from first principles approach. We observed how each of the 26 emission and 42 absorption features measured by the MaNGA DAP (see Section~\ref{sec:dap}), changed across the model parameter space $[Z, t_q, \log \tau]$ with time of observation to determine which spectral features were most sensitive to star formation rate, metallicity, time of observation etc. 
 
-We looked at plots similar to those shown in Figure~\ref{fig:rainbow} for all 26 emission features and 42 absorption features and selected the following features with which to infer the SFH:
+We looked at plots similar to those shown in Figure~\ref{fig:rainbow} for all 26 emission features and 42 absorption features at different ages and metallicities and selected the following features with which to infer the SFH parameters:
 \begin{enumerate}[(i)]
 \item $\rm{EW}[H\alpha]$ as it is the most sensitive to current star formation rate
 
@@ -175,10 +179,6 @@ We assume the following prior on the model parameters so that the probability dr
 % \end{dcases}
 % \end{equation}
 
-As the denominator of Equation~\ref{big} is a normalisation factor, comparison between likelihoods for two different SFH models (i.e., two different combinations of $\theta_k = [Z, t_q, \log \tau]$) is equivalent to a comparison of the numerators. Markov Chain Monte Carlo (MCMC; \citealt{mackay03, emcee13, GW10}) analysis provides a robust comparison of the likelihoods between $\theta$ values.
-
-MCMC allows for a more efficient exploration of the parameter space than a simple $\chi^2$ analysis by avoiding those areas with low likelihood. A large number of `walkers' are started at an initial position (i.e. an initial hypothesis, $\theta$), where the likelihood is calculated; from there they individually `jump' a randomised distance to a new area of parameter space. If the likelihood in this new position is greater than the original position then the `walkers' accept this change in position. Any new position then influences the direction of the  `jumps' of other walkers (this is the case in ensemble MCMC as used in this investigation but not for simple MCMC, which is much slower at converging). This is repeated for the defined number of steps after an initial `burn-in' phase. The length of this burn-in phase is determined after sufficient experimentation to ensure that the `walkers' have converged on a region of parameter space. Here we use \emph{emcee},\footnote{\url{dan.iel.fm/emcee/}} a \emph{Python} module which implements an affine invariant ensemble sampler to explore the parameter space, written by \cite{emcee13}. \emph{emcee} outputs the positions of these `walkers' in the parameter space, which are analogous to the regions of high posterior probability. 
-
 \begin{figure*}
 \centering
 \includegraphics[width=0.495\textwidth]{../figures/walkers_steps_run_without_pruning_example.pdf}
@@ -187,8 +187,21 @@ MCMC allows for a more efficient exploration of the parameter space than a simpl
 \label{fig:comparepruning}
 \end{figure*}
 
+As the denominator of Equation~\ref{big} is a normalisation factor, comparison between likelihoods for two different SFH models (i.e., two different combinations of $\theta_k = [Z, t_q, \log \tau]$) is equivalent to a comparison of the numerators. Markov Chain Monte Carlo (MCMC; \citealt{mackay03, emcee13, GW10}) analysis provides a robust comparison of the likelihoods between $\theta$ values.
+
+MCMC allows for a more efficient exploration of the parameter space than a simple $\chi^2$ analysis by avoiding those areas with low likelihood. A large number of `walkers' are started at an initial position (i.e. an initial hypothesis, $\theta$), where the likelihood is calculated; from there they individually `jump' a randomised distance to a new area of parameter space. If the likelihood in this new position is greater than the original position then the `walkers' accept this change in position. Any new position then influences the direction of the  `jumps' of other walkers (this is the case in ensemble MCMC as used in this investigation but not for simple MCMC, which is much slower at converging). This is repeated for the defined number of steps after an initial `burn-in' phase. The length of this burn-in phase is determined after sufficient experimentation to ensure that the `walkers' have converged on a region of parameter space. Here we use \emph{emcee},\footnote{\url{dan.iel.fm/emcee/}} a \emph{Python} module which implements an affine invariant ensemble sampler to explore the parameter space, written by \cite{emcee13}. \emph{emcee} outputs the positions of these `walkers' in the parameter space, which are analogous to the regions of high posterior probability. 
+
+
+
 With each `walker' jump to a new place in parameter space, a synthetic spectra must be created which must then be measured as described in Section~\ref{sec:dap} to produce predicted spectral parameters. Since this is very computationally expensive, a 4-dimensional look up table of spectral parameters was generated across a logarithmically spaced grid in $[t_{obs},~Z,~t_q,~\tau]$. We initialised our look up table over a non-regular grid, this was to optimise the number of useful $t_q$ values for each $t_{obs}$ value, i.e. quenched SFHs with $t_q \leq t_{obs}$. Those SFHs with $t_q > t_{obs}$ had constant SFR and so returned the same values for the spectral parameters regardless of the $t_q, \log\tau$ values. This allowed us to construct a finer array in $t_q$ for each value of $t_{obs}$ to pinpoint recent changes in the SFH more precisely. 
 
+
+\begin{figure*}
+\centering
+\includegraphics[width=\textwidth]{../figures/starpy_output_corner_example_20_newtqs_random_values.png}
+\caption{Example output from \textsc{snitch} showing the posterior probability function traced by the MCMC walkers across the three dimensional parameter space $[Z, t_q, \log\tau]$. Dashed lines show the 18th, 50th and 64th percentile of each distribution function which can be interpreted as the `best fit' with $±1\sigma$. The blue lines show the known true values which \textsc{snitch} has managed to recover.}
+\label{fig:output}
+\end{figure*}
  
 The look up table is interpolated over (using a nearest neighbour approach to speed up run time over the irregular grid) to find spectral parameters for each `walker' jump to any new position in $[t_{obs},~Z,~t_q,~\log\tau]$ parameter space. 
 
@@ -197,31 +210,6 @@ For each run of \textsc{snitch}, the inference run is initialised with 100 walke
 
 
 \subsection{Pruning walkers stuck in local minima}\label{sec:pruning}
-
-
-
-
-After running \textsc{snitch} and upon inspection of the walker positions it became apparent that the walkers of \emph{emcee} would often get stuck in local minima. We therefore implemented a pruning method, as described in \cite{hou12}, in order to remove those walkers in local minima leaving only the global minima from which to derive inferred SFH parameters. The method outlined in \cite{hou12} is a simple one dimensional clustering method wherein the average negative log-likelihood for each walker is collected. This results in $L$ numbers:
-\begin{equation}
-\overline{l}_k = \frac{1}{T} \sum^{T}_{t=1} l(\vec{\theta}_k(t)|D),
-\end{equation}
-where T is the total number of steps each walker, $k$, takes. These $L$ numbers, $\overline{l}_k$ are therefore characteristic of the well which walker $k$ is in, so that walkers in the same well will have similar $\overline{l}_k$ (see Figure~\ref{fig:localminima} in which walkers are coloured by their characteristic $\overline{l}_{(k)}$ value). 
-
-\begin{figure*}
-\centering
-\includegraphics[width=\textwidth]{../figures/starpy_output_corner_example_20_newtqs_random_values.png}
-\caption{Example output from \textsc{snitch} showing the posterior probability function traced by the MCMC walkers across the three dimensional parameter space $[Z, t_q, \log\tau]$. Dashed lines show the 18th, 50th and 64th percentile of each distribution function which can be interpreted as the `best fit' with $±1\sigma$. The blue lines show the known true values which \textsc{snitch} has managed to recover.}
-\label{fig:output}
-\end{figure*}
-
-The walkers are all then ranked in order of decreasing average log likelihood, $\overline{l}_{(k)}$, or increasing $- \log \overline{l}_{(k)}$. If there are big jumps in the $- \log \overline{l}_{(k)}$, these are easy to spot and are indicative of areas where walkers have got stuck in local minima.The difference in $- \log \overline{l}_{(k)}$ for every adjacent pair of walkers is then calculated. The first pair whose difference is a certain amount times bigger than the average difference previously is then identified like so:
-\begin{equation}
--\log \overline{l}_{(j+1)} + \log \overline{l}_{(j)} > Const − \frac{\log \overline{l}_{(j)} + log \overline{l}_{(1)}}{j - 1}.
-\end{equation}
-
-
-
-All the walkers with with $k>j$ are thrown away and only the ones with $k \leq j$ are kept after being identified as part of the global minimum. This can be seen in Figure~\ref{fig:comparepruning} wherein the walker positions at each step before pruning in the burn-in phase are shown in comparison to those after pruning in the main run stage. In the cases where the `walkers' did not get stuck in local minima, this pruning routine leaves the walker chains untouched. 
 
 \begin{figure*}
 \centering
@@ -232,6 +220,25 @@ All the walkers with with $k>j$ are thrown away and only the ones with $k \leq j
 \caption{Validity test between actual spectral parameter measurements of the central spaxels (with $R/R_e < 0.1$) of all MPL-6 MaNGA galaxies (black contours) and those measured from the synthetic spectra generated for the look up table (red points; see Section~\ref{sec:emcee}). The contours enclose $(11, 39, 68, 86, 96)\%$ of the spaxel measurements in each panel. We have not attempted to recreate the distributions across spectral parameter space seen for real galaxies, we are merely showing the spectral parameters for the SFHs we happen to have generated across the 4-dimensional look up table, which we have shown in Figure~\ref{fig:rainbow} are degenerate.}
 \label{fig:compare_manga_specmeas}
 \end{figure*}
+
+
+After running \textsc{snitch} and upon inspection of the walker positions it became apparent that the walkers of \emph{emcee} would often get stuck in local minima. We therefore implemented a pruning method, as described in \cite{hou12}, in order to remove those walkers in local minima leaving only the global minima from which to derive inferred SFH parameters. The method outlined in \cite{hou12} is a simple one dimensional clustering method wherein the average negative log-likelihood for each walker is collected. This results in $L$ numbers:
+\begin{equation}
+\overline{l}_k = \frac{1}{T} \sum^{T}_{t=1} l(\vec{\theta}_k(t)|D),
+\end{equation}
+where T is the total number of steps each walker, $k$, takes. These $L$ numbers, $\overline{l}_k$ are therefore characteristic of the well which walker $k$ is in, so that walkers in the same well will have similar $\overline{l}_k$ (see Figure~\ref{fig:localminima} in which walkers are coloured by their characteristic $\overline{l}_{(k)}$ value). 
+
+
+The walkers are all then ranked in order of decreasing average log likelihood, $\overline{l}_{(k)}$, or increasing $- \log \overline{l}_{(k)}$. If there are big jumps in the $- \log \overline{l}_{(k)}$, these are easy to spot and are indicative of areas where walkers have got stuck in local minima.The difference in $- \log \overline{l}_{(k)}$ for every adjacent pair of walkers is then calculated. The first pair whose difference is a certain amount times bigger than the average difference previously is then identified like so:
+\begin{equation}
+-\log \overline{l}_{(j+1)} + \log \overline{l}_{(j)} > Const − \frac{\log \overline{l}_{(j)} + log \overline{l}_{(1)}}{j - 1}.
+\end{equation}
+
+
+
+All the walkers with with $k>j$ are thrown away and only the ones with $k \leq j$ are kept after being identified as part of the global minimum. This can be seen in Figure~\ref{fig:comparepruning} wherein the walker positions at each step before pruning in the burn-in phase are shown in comparison to those after pruning in the main run stage. In the cases where the `walkers' did not get stuck in local minima, this pruning routine leaves the walker chains untouched. 
+
+
 
 \section{Output of Code}\label{sec:output}
 
@@ -266,6 +273,22 @@ $\Delta \tau~\rm{[Gyr]}~$ & $0.2$ & $2.3$ & $1.4$ & $2.1$ & $2.6$ & $1.5$
 \end{tabular*}
 \end{table*}
 
+
+\begin{table*}
+\centering
+\caption{The mean star formation fraction (SFF) in each age bin for the six galaxy samples quoted by \protect\cite[][TSFF]{tojeiro13} and returned by \textsc{snitch}. Each value is quoted with a $1\sigma$ uncertainty, for the \protect\cite{tojeiro13} values this is quoted as the standard error on the mean for each bin . The SFF and $1\sigma$ errors are given in units of $10^{-3}$.}
+\label{table:tojeirocompare}
+\begin{tabular*}{0.9\textwidth}{l|cc|cc|cc|cc}
+                        & \multicolumn{2}{c|}{$0.01 - 0.074~\rm{Gyr}$}     & \multicolumn{2}{c|}{$0.074 - 0.425~\rm{Gyr}$} & \multicolumn{2}{c|}{$0.425 - 2.44~\rm{Gyr}$} & \multicolumn{2}{c}{$2.44 - 13.7~\rm{Gyr}$} \\ \hline
+                        & TSFF & \multicolumn{1}{c|}{\textsc{snitch} SFF} & TSFF          & \textsc{snitch} SFF          & TSFF          & \textsc{snitch} SFF         & TSFF         & \textsc{snitch} SFF        \\ \hline
+Red ellipticals         & 0.11   &  1 $\pm$ 50  &  0.32  &    1 $\pm$ 51   &  12   &   24 $\pm$ 62   &  966  &   973 $\pm$ 42    \\
+Red early-type spirals  & 0.65   &  5 $\pm$ 53  &  2.4   &  13 $\pm$ 57     &  36   &   238 $\pm$ 169   &  960  &  741 $\pm$ 75    \\
+Red late-type spirals   &  1.9   &  75 $\pm$ 87   &  5.6   &   136 $\pm$ 118    &  59   &   323 $\pm$ 212   &  933  &   445 $\pm$ 222    \\ \hline
+Blue ellipticals        &  2.5   &  109 $\pm$ 105   &  11    &   188 $\pm$ 144    &  52   &   333 $\pm$ 211   &  934  &     350 $\pm$ 271  \\
+Blue early-type spirals &  4.9   &  84 $\pm$ 58  &  14    &   140 $\pm$ 96    &  42   &   217 $\pm$ 134   &  938  &  537 $\pm$ 301     \\
+Blue late-type spirals  &  6.1   &  72 $\pm$ 61  &  11    &   123 $\pm$ 102    &  43   &    201 $\pm$ 148  &  939  & 585 $\pm$ 322                              
+\end{tabular*}
+\end{table*}
 
 The burn-in and main run walker positions and posterior probabilities at each step are written to disc by \textsc{snitch}. From this three dimensional MCMC chain charting the $[Z, t_q, \log \tau]$ positions of the walkers around parameter space, the `best fit' $[Z, t_q, \log \tau]$ values along with their uncertainties can be determined from the 16th, 50th and 84th percentile values of the walker positions. An example output from \textsc{snitch} for a single synthetic spectrum constructed with the FSPS models (see Section~\ref{sec:fsps}) is shown in Figure~\ref{fig:output}. This figure is also written to disc by \textsc{snitch} upon completion of a run on a single spectrum.  
 
@@ -322,9 +345,9 @@ Figure~\ref{fig:mangacompare} shows the distributions of the inferred and measur
 
 \subsection{Testing accuracy}\label{sec:accuracytest}
 
-We have shown in the previous section that \textsc{snitch} can return precise known values for SFHs, however now we must test its accuracy. In order to quantify this we have run \textsc{snitch} on spectra which have previously derived star formation histories. Firstly, on those which have had toy models derived (Section~\ref{secsec:compare}) and then on spectra with star formation histories from hydrodynamic simulations (Section~\ref{sec:lgalaxies}).
+We have shown in the previous section that \textsc{snitch} can return precise known values for SFHs, however now we must test its accuracy. In order to quantify this we have run \textsc{snitch} on spectra which have previously derived star formation histories. Firstly, on those which have had simple models derived (Section~\ref{secsec:compare}) and then on spectra with star formation histories from hydrodynamic simulations (Section~\ref{sec:lgalaxies}).
 
-\subsubsection{Comparing with other toy model SFH codes}\label{secsec:compare}
+\subsubsection{Comparing with other SFH inference codes}\label{secsec:compare}
 
 \begin{figure}
 \centering
@@ -333,34 +356,9 @@ We have shown in the previous section that \textsc{snitch} can return precise kn
 \label{fig:tojeirocompare}
 \end{figure}
 
-In the case of the previously fitted toy models, we have compared the results of \textsc{snitch} with the toy star formation histories derived by \cite{tojeiro13} for $6$ stacked SDSS spectra of $13959$ red ellipticals, $381$ blue ellipticals, $5139$ blue late-type spirals, $294$ red late-type spirals, $1144$ blue early-type spirals and $1265$ red early-type spirals. We measured the spectral features of each of the $6$ stacked spectra using the method outlined in Section~\ref{sec:dap} and input them into \textsc{snitch}. Since \cite{tojeiro13} quoted their results in terms of the fraction of stars formed (SFF) in a given time period, we have followed the same method. In Table~\ref{table:tojeirocompare} we have listed the SFF for the six samples used by \citeauthor{tojeiro13} and the SFF for the best fit parameters returned by \textsc{snitch} along with the median $1\sigma$ error. These results are also plotted in Figure~\ref{fig:tojeirocompare}. 
+In the case of the previously fitted simple SFH models, we have compared the results of \textsc{snitch} with the parametrised star formation histories derived by \cite{tojeiro13} for $6$ stacked SDSS spectra of $13959$ red ellipticals, $381$ blue ellipticals, $5139$ blue late-type spirals, $294$ red late-type spirals, $1144$ blue early-type spirals and $1265$ red early-type spirals. We measured the spectral features of each of the $6$ stacked spectra using the method outlined in Section~\ref{sec:dap} and input them into \textsc{snitch}. Since \cite{tojeiro13} quoted their results in terms of the fraction of stars formed (SFF) in a given time period, we have followed the same method. In Table~\ref{table:tojeirocompare} we have listed the SFF for the six samples used by \citeauthor{tojeiro13} and the SFF for the best fit parameters returned by \textsc{snitch} along with the median $1\sigma$ error. These results are also plotted in Figure~\ref{fig:tojeirocompare}. 
 
-We can see from these results that \textsc{snitch} broadly agrees with the results of \cite{tojeiro13}, within error for the red galaxy stacked spectra, i.e. those galaxies which typically have lower star formation rates. However, \textsc{snitch} does not agree with the star formation fractions derived by \cite{tojeiro13} for blue galaxies. This is to be expected since \textsc{SNITCH} fits a quenching SFH model to a galaxy spectrum and so would return a less accurate SFH for star forming spectra (see Section~\ref{secsec:starforming}). These results suggest that \textsc{SNITCH} does return an accurate toy model of star formation history at least for galaxies which are quenching or quenched.   
-
-
-
-\begin{table*}
-\centering
-\caption{The mean star formation fraction (SFF) in each age bin for the six galaxy samples quoted by \protect\cite[][TSFF]{tojeiro13} and returned by \textsc{snitch}. Each value is quoted with a $1\sigma$ uncertainty, for the \protect\cite{tojeiro13} values this is quoted as the standard error on the mean for each bin . The SFF and $1\sigma$ errors are given in units of $10^{-3}$.}
-\label{table:tojeirocompare}
-\begin{tabular*}{0.9\textwidth}{l|cc|cc|cc|cc}
-                        & \multicolumn{2}{c|}{$0.01 - 0.074~\rm{Gyr}$}     & \multicolumn{2}{c|}{$0.074 - 0.425~\rm{Gyr}$} & \multicolumn{2}{c|}{$0.425 - 2.44~\rm{Gyr}$} & \multicolumn{2}{c}{$2.44 - 13.7~\rm{Gyr}$} \\ \hline
-                        & TSFF & \multicolumn{1}{c|}{\textsc{snitch} SFF} & TSFF          & \textsc{snitch} SFF          & TSFF          & \textsc{snitch} SFF         & TSFF         & \textsc{snitch} SFF        \\ \hline
-Red ellipticals         & 0.11   &  1 $\pm$ 50  &  0.32  &    1 $\pm$ 51   &  12   &   24 $\pm$ 62   &  966  &   973 $\pm$ 42    \\
-Red early-type spirals  & 0.65   &  5 $\pm$ 53  &  2.4   &  13 $\pm$ 57     &  36   &   238 $\pm$ 169   &  960  &  741 $\pm$ 75    \\
-Red late-type spirals   &  1.9   &  75 $\pm$ 87   &  5.6   &   136 $\pm$ 118    &  59   &   323 $\pm$ 212   &  933  &   445 $\pm$ 222    \\ \hline
-Blue ellipticals        &  2.5   &  109 $\pm$ 105   &  11    &   188 $\pm$ 144    &  52   &   333 $\pm$ 211   &  934  &     350 $\pm$ 271  \\
-Blue early-type spirals &  4.9   &  84 $\pm$ 58  &  14    &   140 $\pm$ 96    &  42   &   217 $\pm$ 134   &  938  &  537 $\pm$ 301     \\
-Blue late-type spirals  &  6.1   &  72 $\pm$ 61  &  11    &   123 $\pm$ 102    &  43   &    201 $\pm$ 148  &  939  & 585 $\pm$ 322                              
-\end{tabular*}
-\end{table*}
-
-% \subsubsection{Comparing with full spectral fitting codes}\label{secsec:fullcompare}
-
-
-% For the case of the full spectral fit derived star formation history, we have chosen three examples from work by \cite{?} in the MaNGA team. The sample used by \citeauthor{?} have had their spectra fit and measured using the full MaNGA DAP pipeline \citep{westfall18} so measurements of their spectral features were readily available. We used these measurements as inputs into \textsc{snitch} and in Figure~\ref{fig:fspfcompare} have plotted the output best fit quenching history in comparison to that output by the full spectra fitting code of \cite{?}. This figure shows that although we implement a toy model of star formation history in \textsc{snitch}, we are able to recover the features of the most recent epoch of star formation.  
-
-\subsubsection{Comparing with `realistic' known SFHs from hydrodynamic simulations}\label{sec:lgalaxies}
+We can see from these results that \textsc{snitch} broadly agrees with the results of \cite{tojeiro13}, within error for the red galaxy stacked spectra, i.e. those galaxies which typically have lower star formation rates. However, \textsc{snitch} does not agree with the star formation fractions derived by \cite{tojeiro13} for blue galaxies. This is to be expected since \textsc{SNITCH} fits a quenching SFH model to a galaxy spectrum and so would return a less accurate SFH for star forming spectra (see Section~\ref{secsec:starforming}). These results suggest that \textsc{SNITCH} does return an accurate parametrised model of star formation history at least for galaxies which are quenching or quenched.   
 
 \begin{figure}
 \centering
@@ -376,7 +374,18 @@ Blue late-type spirals  &  6.1   &  72 $\pm$ 61  &  11    &   123 $\pm$ 102    &
 \label{fig:genlgalsfhs}
 \end{figure}
 
-We generated $8238$ simulated galaxy SFHs using the \texttt{LGalaxies} suite of hydrodynamic simulations \citep{henriques15} at a redshift of $z=0.043$ (the mean redshfit of the MaNGA DR14 sample) with a range of star formation rates, $0 < \rm{SFR}~[M_{\odot}~\rm{yr}^{-1}] < 1$, and stellar masses $10^9 < M_{*} [M_{\odot}] < 10^{11}$. Of these $8238$ simulated galaxies we selected all of those flagged by \texttt{LGalaxies} to have a quasar accretion rate above zero. This resulted in $104$ simulated galaxies SFHs. We used the FSPS models of \cite{conroy10} to generate synthetic spectra for each of these $104$ simulated SFH (as described in Section~\ref{sec:fsps}) and then measured their spectral features using the MaNGA DAP functions outlined in Section~\ref{sec:dap}. We then input these measurements into \textsc{snitch} to derive the best fit $[Z, t_q, \log \tau]$ parameters for our toy model of SFH to compare with the known SFH output by the hydrodynamic simulation. This test is therefore very similar to our tests with different known SFHs that we generated in Section~\ref{sec:diffSFHs}, however the SFHs generated by the hydrodynamic simulation can be classed as both more varied and more ``realistic" in this case.
+
+
+% \subsubsection{Comparing with full spectral fitting codes}\label{secsec:fullcompare}
+
+
+% For the case of the full spectral fit derived star formation history, we have chosen three examples from work by \cite{?} in the MaNGA team. The sample used by \citeauthor{?} have had their spectra fit and measured using the full MaNGA DAP pipeline \citep{westfall18} so measurements of their spectral features were readily available. We used these measurements as inputs into \textsc{snitch} and in Figure~\ref{fig:fspfcompare} have plotted the output best fit quenching history in comparison to that output by the full spectra fitting code of \cite{?}. This figure shows that although we implement a toy model of star formation history in \textsc{snitch}, we are able to recover the features of the most recent epoch of star formation.  
+
+\subsubsection{Comparing with `realistic' known SFHs from hydrodynamic simulations}\label{sec:lgalaxies}
+
+
+
+We generated $8238$ simulated galaxy SFHs using the \texttt{LGalaxies} suite of hydrodynamic simulations \citep{henriques15} at a redshift of $z=0.043$ (the mean redshfit of the MaNGA DR14 sample) with a range of star formation rates, $0 < \rm{SFR}~[M_{\odot}~\rm{yr}^{-1}] < 1$, and stellar masses $10^9 < M_{*} [M_{\odot}] < 10^{11}$. Of these $8238$ simulated galaxies we selected all of those flagged by \texttt{LGalaxies} to have a quasar accretion rate above zero. This resulted in $104$ simulated galaxies SFHs. We used the FSPS models of \cite{conroy10} to generate synthetic spectra for each of these $104$ simulated SFH (as described in Section~\ref{sec:fsps}) and then measured their spectral features using the MaNGA DAP functions outlined in Section~\ref{sec:dap}. We then input these measurements into \textsc{snitch} to derive the best fit $[Z, t_q, \log \tau]$ parameters for our simple model of SFH to compare with the known SFH output by the hydrodynamic simulation. This test is therefore very similar to our tests with different known SFHs that we generated in Section~\ref{sec:diffSFHs}, however the SFHs generated by the hydrodynamic simulation can be classed as both more varied and more ``realistic" in this case.
 
 Figure~\ref{fig:lgalsfhs} shows the normalised star formation fractions as generated by \texttt{Lgalaxies} and inferred for their spectra by \textsc{snitch} for $10$ randomly selected simulated SFHs. We can see that the output from \textsc{snitch} largely agrees, within the uncertainties, with the known SFHs of Lgalaxies. Although not all details of the \texttt{Lgalaxies} SFHs are reproduced, \textsc{snitch} identifies the most recent epoch of a dramatic change in the star formation rate.
 
@@ -416,7 +425,16 @@ We found that \textsc{snitch} was always sensitive to the most recent epoch of s
 
 \section{Conclusions}
 
-We have described our quenching history inference code \textsc{snitch} (bayeSian iNference, given emIssion and absorpTion spectral features, of quenChing Histories) which uses absorption and emission features measured from a spectra to infer a simple exponentially declining toy model of star formation history. We have demonstrated that it is both precise and accurate at deriving a toy model of star formation history. We have completed a rigorous set of tests the results of which suggest that \textsc{snitch} is most sensitive to the most recent epoch of star formation but can also trace the quenching of star formation even if the true decline does not occur at an exponential rate.  We advocate the use of this code as a comparative tool across a large sample of spectra, rather than to derive a detailed star formation history of a single spectra. 
+We have described our quenching history inference code, \textsc{snitch}, which uses a set of five absorption and emission spectral features to infer a simple exponentially declining model of star formation history. We have demonstrated that it is both precise and accurate at deriving the parameters describing this simple model of star formation history. We have completed a rigorous set of tests, the results of which suggest that \textsc{snitch} is sensitive to the most recent epoch of star formation but can also trace the quenching of star formation even if the true decline does not occur at an exponential rate.  We advocate the use of this code as a comparative tool across a large sample of spectra, rather than to derive a detailed star formation history of a single spectra. 
+
+\section*{Acknowledgements}
+
+RJS gratefully acknowledges research funding from the Ogden Trust. 
+
+Funding for the Sloan Digital Sky Survey IV has been provided by the Alfred P. Sloan Foundation, the U.S. Department of Energy Office of Science, and the Participating Institutions. SDSS acknowledges support and resources from the Center for High-Performance Computing at the University of Utah. The SDSS web site is \url{www.sdss.org}.
+
+SDSS is managed by the Astrophysical Research Consortium for the Participating Institutions of the SDSS Collaboration including the Brazilian Participation Group, the Carnegie Institution for Science, Carnegie Mellon University, the Chilean Participation Group, the French Participation Group, Harvard-Smithsonian Center for Astrophysics, Instituto de Astrof\'isica de Canarias, The Johns Hopkins University, Kavli Institute for the Physics and Mathematics of the Universe (IPMU) / University of Tokyo, Lawrence Berkeley National Laboratory, Leibniz Institut für Astrophysik Potsdam (AIP), Max-Planck-Institut f\"ur Astronomie (MPIA Heidelberg), Max-Planck-Institut für Astrophysik (MPA Garching), Max-Planck-Institut f\"ur Extraterrestrische Physik (MPE), National Astronomical Observatories of China, New Mexico State University, New York University, University of Notre Dame, Observat\'orio Nacional / MCTI, The Ohio State University, Pennsylvania State University, Shanghai Astronomical Observatory, United Kingdom Participation Group, Universidad Nacional Aut\'onoma de M\'exico, University of Arizona, University of Colorado Boulder, University of Oxford, University of Portsmouth, University of Utah, University of Virginia, University of Washington, University of Wisconsin, Vanderbilt University and Yale University.
+
 
 \bibliographystyle{mn2e}
 \bibliography{refs}  
