@@ -1,0 +1,341 @@
+ \newcommand{\noop}[1]{}
+\begin{thebibliography}{}
+
+\bibitem[\protect\citeauthoryear{{Balogh}, {Morris}, {Yee}, {Carlberg} \&
+  {Ellingson}}{{Balogh} et~al.}{1999}]{balogh99}
+{Balogh} M.~L.,  {Morris} S.~L.,  {Yee} H.~K.~C.,  {Carlberg} R.~G.,
+  {Ellingson} E.,  1999, \apj, 527, 54
+
+\bibitem[\protect\citeauthoryear{{Blanton}, {Bershady}, {Abolfathi},
+  {Albareti}, {Allende Prieto}, {Almeida}, {Alonso-Garc{\'{\i}}a}, {Anders},
+  {Anderson}, {Andrews} \& et al.}{{Blanton} et~al.}{2017}]{blanton17}
+{Blanton} M.~R.,  {Bershady} M.~A.,  {Abolfathi} B.,  {Albareti} F.~D.,
+  {Allende Prieto} C.,  {Almeida} A.,  {Alonso-Garc{\'{\i}}a} J.,  {Anders} F.,
+   {Anderson} S.~F.,  {Andrews} B.,    et al. 2017, \aj, 154, 28
+
+\bibitem[\protect\citeauthoryear{{Brinchmann}, {Charlot}, {White}, {Tremonti},
+  {Kauffmann}, {Heckman} \& {Brinkmann}}{{Brinchmann}
+  et~al.}{2004}]{brinchmann04}
+{Brinchmann} J.,  {Charlot} S.,  {White} S.~D.~M.,  {Tremonti} C.,  {Kauffmann}
+  G.,  {Heckman} T.,    {Brinkmann} J.,  2004, \mnras, 351, 1151
+
+\bibitem[\protect\citeauthoryear{{Bryant}, {Owers}, {Robotham}, {Croom},
+  {Driver}, {Drinkwater}, {Lorente}, {Cortese}, {Scott}, {Colless}, {Schaefer},
+  {Taylor}, {Konstantopoulos}, {Allen} \& {Baldry}}{{Bryant}
+  et~al.}{2015}]{bryant12}
+{Bryant} J.~J.,  {Owers} M.~S.,  {Robotham} A.~S.~G.,  {Croom} S.~M.,  {Driver}
+  S.~P.,  {Drinkwater} M.~J.,  {Lorente} N.~P.~F.,  {Cortese} L.,  {Scott} N.,
+  {Colless} M.,  {Schaefer} A.,  {Taylor} E.~N.,  {Konstantopoulos} I.~S.,
+  {Allen} J.~T.,    {Baldry} I.,  2015, \mnras, 447, 2857
+
+\bibitem[\protect\citeauthoryear{{Bundy}, {Bershady}, {Law}, {Yan}, {Drory},
+  {MacDonald}, {Wake}, {Cherinka}, {S{\'a}nchez-Gallego}, {Weijmans}, {Thomas}
+  \& et}{{Bundy} et~al.}{2015}]{bundy15}
+{Bundy} K.,  {Bershady} M.~A.,  {Law} D.~R.,  {Yan} R.,  {Drory} N.,
+  {MacDonald} N.,  {Wake} D.~A.,  {Cherinka} B.,  {S{\'a}nchez-Gallego} J.~R.,
+  {Weijmans} A.-M.,  {Thomas} D.,    et a.,  2015, \apj, 798, 7
+
+\bibitem[\protect\citeauthoryear{{Burstein}, {Faber}, {Gaskell} \&
+  {Krumm}}{{Burstein} et~al.}{1984}]{burstein84}
+{Burstein} D.,  {Faber} S.~M.,  {Gaskell} C.~M.,    {Krumm} N.,  1984, \apj,
+  287, 586
+
+\bibitem[\protect\citeauthoryear{{Burstein}, {Faber} \& {Gonzalez}}{{Burstein}
+  et~al.}{1986}]{burstein86}
+{Burstein} D.,  {Faber} S.~M.,    {Gonzalez} J.~J.,  1986, \aj, 91, 1130
+
+\bibitem[\protect\citeauthoryear{{Calzetti}, {Armus}, {Bohlin}, {Kinney},
+  {Koornneef} \& {Storchi-Bergmann}}{{Calzetti} et~al.}{2000}]{calzetti00}
+{Calzetti} D.,  {Armus} L.,  {Bohlin} R.~C.,  {Kinney} A.~L.,  {Koornneef} J.,
+    {Storchi-Bergmann} T.,  2000, \apj, 533, 682
+
+\bibitem[\protect\citeauthoryear{{Cappellari} \& {Emsellem}}{{Cappellari} \&
+  {Emsellem}}{2004}]{cappellari04}
+{Cappellari} M.,  {Emsellem} E.,  2004, \pasp, 116, 138
+
+\bibitem[\protect\citeauthoryear{{Chabrier}}{{Chabrier}}{2003}]{chabrier03}
+{Chabrier} G.,  2003, \pasp, 115, 763
+
+\bibitem[\protect\citeauthoryear{Cherinka, S\'anchez-Gallego, Andrews \&
+  Brownstein}{Cherinka et~al.}{2018}]{cherinka18}
+Cherinka B.,  S\'anchez-Gallego J.,  Andrews B.,    Brownstein J., , 2018,
+  10.5281/zenodo.1146705, sdss/marvin: Marvin Beta 2.2.0
+
+\bibitem[\protect\citeauthoryear{{Chevallard} \& {Charlot}}{{Chevallard} \&
+  {Charlot}}{2016}]{chevallard16}
+{Chevallard} J.,  {Charlot} S.,  2016, \mnras, 462, 1415
+
+\bibitem[\protect\citeauthoryear{{Chilingarian}}{{Chilingarian}}{2009}]{chill09}
+{Chilingarian} I.~V.,  2009, \mnras, 394, 1229
+
+\bibitem[\protect\citeauthoryear{{Chilingarian} \& {Asa'd}}{{Chilingarian} \&
+  {Asa'd}}{2018}]{chill18}
+{Chilingarian} I.~V.,  {Asa'd} R.,  2018, \apj, 858, 63
+
+\bibitem[\protect\citeauthoryear{{Chilingarian}, {Mieske}, {Hilker} \&
+  {Infante}}{{Chilingarian} et~al.}{2011}]{chill11}
+{Chilingarian} I.~V.,  {Mieske} S.,  {Hilker} M.,    {Infante} L.,  2011,
+  \mnras, 412, 1627
+
+\bibitem[\protect\citeauthoryear{{Cid Fernandes}, {Mateus}, {Sodr{\'e}},
+  {Stasi{\'n}ska} \& {Gomes}}{{Cid Fernandes} et~al.}{2005}]{cidfernandes05}
+{Cid Fernandes} R.,  {Mateus} A.,  {Sodr{\'e}} L.,  {Stasi{\'n}ska} G.,
+  {Gomes} J.~M.,  2005, \mnras, 358, 363
+
+\bibitem[\protect\citeauthoryear{{Conroy}, {Graves} \& {van Dokkum}}{{Conroy}
+  et~al.}{2014}]{conroy14}
+{Conroy} C.,  {Graves} G.~J.,    {van Dokkum} P.~G.,  2014, \apj, 780, 33
+
+\bibitem[\protect\citeauthoryear{{Conroy} \& {Gunn}}{{Conroy} \&
+  {Gunn}}{2010}]{conroy10}
+{Conroy} C.,  {Gunn} J.~E.,  2010, \apj, 712, 833
+
+\bibitem[\protect\citeauthoryear{{Conroy}, {Gunn} \& {White}}{{Conroy}
+  et~al.}{2009}]{conroy09}
+{Conroy} C.,  {Gunn} J.~E.,    {White} M.,  2009, \apj, 699, 486
+
+\bibitem[\protect\citeauthoryear{{Draine} \& {Li}}{{Draine} \&
+  {Li}}{2007}]{draineli07}
+{Draine} B.~T.,  {Li} A.,  2007, \apj, 657, 810
+
+\bibitem[\protect\citeauthoryear{{Faber}, {Friel}, {Burstein} \&
+  {Gaskell}}{{Faber} et~al.}{1985}]{faber85}
+{Faber} S.~M.,  {Friel} E.~D.,  {Burstein} D.,    {Gaskell} C.~M.,  1985, The
+  Astrophysical Journal Supplement Series, 57, 711
+
+\bibitem[\protect\citeauthoryear{{Ferland}, {Porter}, {van Hoof}, {Williams},
+  {Abel}, {Lykins}, {Shaw}, {Henney} \& {Stancil}}{{Ferland}
+  et~al.}{2013}]{ferland13}
+{Ferland} G.~J.,  {Porter} R.~L.,  {van Hoof} P.~A.~M.,  {Williams} R.~J.~R.,
+  {Abel} N.~P.,  {Lykins} M.~L.,  {Shaw} G.,  {Henney} W.~J.,    {Stancil}
+  P.~C.,  2013, \rmxaa, 49, 137
+
+\bibitem[\protect\citeauthoryear{{Foreman-Mackey}, {Hogg}, {Lang} \&
+  {Goodman}}{{Foreman-Mackey} et~al.}{2013}]{emcee13}
+{Foreman-Mackey} D.,  {Hogg} D.~W.,  {Lang} D.,    {Goodman} J.,  2013, \pasp,
+  125, 306
+
+\bibitem[\protect\citeauthoryear{Foreman-Mackey, Sick \&
+  Johnson}{Foreman-Mackey et~al.}{2014}]{python_fsps}
+Foreman-Mackey D.,  Sick J.,    Johnson B.,  2014, 10.5281/zenodo.12157
+
+\bibitem[\protect\citeauthoryear{{Girardi}, {Bertelli}, {Bressan}, {Chiosi},
+  {Groenewegen}, {Marigo}, {Salasnich} \& {Weiss}}{{Girardi}
+  et~al.}{2002}]{girardi02}
+{Girardi} L.,  {Bertelli} G.,  {Bressan} A.,  {Chiosi} C.,  {Groenewegen}
+  M.~A.~T.,  {Marigo} P.,  {Salasnich} B.,    {Weiss} A.,  2002, \aap, 391, 195
+
+\bibitem[\protect\citeauthoryear{{Goddard}, {Thomas}, {Maraston}, {Westfall},
+  {Etherington}, {Riffel}, {Mallmann}, {Zheng}, {Argudo-Fern{\'a}ndez}, {Lian},
+  {Bershady}, {Bundy}, {Drory}, {Law} \& {Yan}}{{Goddard}
+  et~al.}{2017}]{goddard17}
+{Goddard} D.,  {Thomas} D.,  {Maraston} C.,  {Westfall} K.,  {Etherington} J.,
+  {Riffel} R.,  {Mallmann} N.~D.,  {Zheng} Z.,  {Argudo-Fern{\'a}ndez} M.,
+  {Lian} J.,  {Bershady} M.,  {Bundy} K.,  {Drory} N.,  {Law} D.,    {Yan} R.,
+  2017, \mnras, 466, 4731
+
+\bibitem[\protect\citeauthoryear{{Goodman} \& {Weare}}{{Goodman} \&
+  {Weare}}{2010}]{GW10}
+{Goodman} J.,  {Weare} J.,  2010, CAMCS, 5, 65
+
+\bibitem[\protect\citeauthoryear{{Gorgas}, {Faber}, {Burstein}, {Gonzalez},
+  {Courteau} \& {Prosser}}{{Gorgas} et~al.}{1993}]{gorgas93}
+{Gorgas} J.,  {Faber} S.~M.,  {Burstein} D.,  {Gonzalez} J.~J.,  {Courteau} S.,
+     {Prosser} C.,  1993, The Astrophysical Journal Supplement Series, 86, 153
+
+\bibitem[\protect\citeauthoryear{{Goto}}{{Goto}}{2005}]{goto05b}
+{Goto} T.,  2005, \mnras, 357, 937
+
+\bibitem[\protect\citeauthoryear{{Henriques}, {White}, {Thomas}, {Angulo},
+  {Guo}, {Lemson}, {Springel} \& {Overzier}}{{Henriques}
+  et~al.}{2015}]{henriques15}
+{Henriques} B.~M.~B.,  {White} S.~D.~M.,  {Thomas} P.~A.,  {Angulo} R.,  {Guo}
+  Q.,  {Lemson} G.,  {Springel} V.,    {Overzier} R.,  2015, \mnras, 451, 2663
+
+\bibitem[\protect\citeauthoryear{{Hou}, {Goodman}, {Hogg}, {Weare} \&
+  {Schwab}}{{Hou} et~al.}{2012}]{hou12}
+{Hou} F.,  {Goodman} J.,  {Hogg} D.~W.,  {Weare} J.,    {Schwab} C.,  2012,
+  \apj, 745, 198
+
+\bibitem[\protect\citeauthoryear{{Huang}, {Kauffmann}, {Chen}, {Moran},
+  {Heckman}, {Dav{\'e}} \& {Johansson}}{{Huang} et~al.}{2013}]{huang13}
+{Huang} M.-L.,  {Kauffmann} G.,  {Chen} Y.-M.,  {Moran} S.~M.,  {Heckman}
+  T.~M.,  {Dav{\'e}} R.,    {Johansson} J.,  2013, \mnras, 431, 2622
+
+\bibitem[\protect\citeauthoryear{{Kauffmann}, {Heckman}, {White}, {Charlot},
+  {Tremonti}, {Brinchmann}, {Bruzual}, {Peng}, {Seibert}, {Bernardi}, {Blanton}
+  \& {Brinkmann}}{{Kauffmann} et~al.}{2003}]{kauffmann03}
+{Kauffmann} G.,  {Heckman} T.~M.,  {White} S.~D.~M.,  {Charlot} S.,  {Tremonti}
+  C.,  {Brinchmann} J.,  {Bruzual} G.,  {Peng} E.~W.,  {Seibert} M.,
+  {Bernardi} M.,  {Blanton} M.,    {Brinkmann} J.,  2003, \mnras, 341, 33
+
+\bibitem[\protect\citeauthoryear{{Kennicutt} \& {Evans}}{{Kennicutt} \&
+  {Evans}}{2012}]{kennevans12}
+{Kennicutt} R.~C.,  {Evans} N.~J.,  2012, Annual Review of Astronomy and
+  Astrophysics, 50, 531
+
+\bibitem[\protect\citeauthoryear{{Kirby}, {Cohen}, {Guhathakurta}, {Cheng},
+  {Bullock} \& {Gallazzi}}{{Kirby} et~al.}{2013}]{kirby13}
+{Kirby} E.~N.,  {Cohen} J.~G.,  {Guhathakurta} P.,  {Cheng} L.,  {Bullock}
+  J.~S.,    {Gallazzi} A.,  2013, \apj, 779, 102
+
+\bibitem[\protect\citeauthoryear{{Li}, {Wang}, {Lin}, {Bershady}, {Bundy},
+  {Tremonti}, {Xiao}, {Yan}, {Bizyaev}, {Blanton}, {Cales} \& {Cherinka}}{{Li}
+  et~al.}{2015}]{li15}
+{Li} C.,  {Wang} E.,  {Lin} L.,  {Bershady} M.~A.,  {Bundy} K.,  {Tremonti}
+  C.~A.,  {Xiao} T.,  {Yan} R.,  {Bizyaev} D.,  {Blanton} M.,  {Cales} S.,
+  {Cherinka} B.,  2015, \apj, 804, 125
+
+\bibitem[\protect\citeauthoryear{{Mackay}}{{Mackay}}{2003}]{mackay03}
+{Mackay} D.~J.~C.,  2003, {Information Theory, Inference and Learning
+  Algorithms}.
+{Cambridge University Press}
+
+\bibitem[\protect\citeauthoryear{{Martin}, {Wyder}, {Schiminovich}, {Barlow},
+  {Forster}, {Friedman}, {Morrissey}, {Neff}, {Seibert}, {Small}, {Welsh},
+  {Bianchi}, {Donas}, {Heckman}, {Lee}, {Madore}, {Milliard}, {Rich}, {Szalay}
+  \& {Yi}}{{Martin} et~al.}{2007}]{martin07}
+{Martin} D.~C.,  {Wyder} T.~K.,  {Schiminovich} D.,  {Barlow} T.~A.,  {Forster}
+  K.,  {Friedman} P.~G.,  {Morrissey} P.,  {Neff} S.~G.,  {Seibert} M.,
+  {Small} T.,  {Welsh} B.~Y.,  {Bianchi} L.,  {Donas} J.,  {Heckman} T.~M.,
+  {Lee} Y.-W.,  {Madore} B.~F.,  {Milliard} B.,  {Rich} R.~M.,  {Szalay} A.~S.,
+     {Yi} S.~K.,  2007, \apjs, 173, 342
+
+\bibitem[\protect\citeauthoryear{{Moustakas}, {Kennicutt} Robert~C. \&
+  {Tremonti}}{{Moustakas} et~al.}{2006}]{moustakas06}
+{Moustakas} J.,  {Kennicutt} Robert~C. J.,    {Tremonti} C.~A.,  2006, \apj,
+  642, 775
+
+\bibitem[\protect\citeauthoryear{{Noeske} \& {et al.}}{{Noeske} \& {et
+  al.}}{2007}]{noeske07}
+{Noeske} K.~G.,  {et al.} 2007, \apjl, 660, L43
+
+\bibitem[\protect\citeauthoryear{{Noll}, {Burgarella}, {Giovannoli}, {Buat},
+  {Marcillac} \& {Mu{\~n}oz-Mateos}}{{Noll} et~al.}{2009}]{noll09}
+{Noll} S.,  {Burgarella} D.,  {Giovannoli} E.,  {Buat} V.,  {Marcillac} D.,
+  {Mu{\~n}oz-Mateos} J.~C.,  2009, \aap, 507, 1793
+
+\bibitem[\protect\citeauthoryear{{Ocvirk}, {Pichon}, {Lan{\c{c}}on} \&
+  {Thi{\'e}baut}}{{Ocvirk} et~al.}{2006}]{ocvirk06}
+{Ocvirk} P.,  {Pichon} C.,  {Lan{\c{c}}on} A.,    {Thi{\'e}baut} E.,  2006,
+  \mnras, 365, 46
+
+\bibitem[\protect\citeauthoryear{{Peng} \& {et al.}}{{Peng} \& {et
+  al.}}{2010}]{peng10}
+{Peng} Y.-j.,  {et al.} 2010, \apj, 721, 193
+
+\bibitem[\protect\citeauthoryear{{Planck Collaboration}, {Ade}, {Aghanim},
+  {Arnaud}, {Ashdown}, {Aumont}, {Baccigalupi}, {Banday}, {Barreiro},
+  {Bartlett} \& et al.}{{Planck Collaboration} et~al.}{2016}]{planck16}
+{Planck Collaboration} {Ade} P.~A.~R.,  {Aghanim} N.,  {Arnaud} M.,  {Ashdown}
+  M.,  {Aumont} J.,  {Baccigalupi} C.,  {Banday} A.~J.,  {Barreiro} R.~B.,
+  {Bartlett} J.~G.,    et al. 2016, \aap, 594, A13
+
+\bibitem[\protect\citeauthoryear{{S{\'a}nchez}, {Kennicutt}, {Gil de Paz}, {van
+  de Ven}, {V{\'{\i}}lchez}, {Wisotzki}, {Walcher}, {Mast}, {Aguerri},
+  {Albiol-P{\'e}rez}, {Alonso-Herrero} \& {Alves}}{{S{\'a}nchez}
+  et~al.}{2012}]{sanchez12}
+{S{\'a}nchez} S.~F.,  {Kennicutt} R.~C.,  {Gil de Paz} A.,  {van de Ven} G.,
+  {V{\'{\i}}lchez} J.~M.,  {Wisotzki} L.,  {Walcher} C.~J.,  {Mast} D.,
+  {Aguerri} J.~A.~L.,  {Albiol-P{\'e}rez} S.,  {Alonso-Herrero} A.,    {Alves}
+  J.,  2012, \aap, 538, A8
+
+\bibitem[\protect\citeauthoryear{{S{\'a}nchez}, {P{\'e}rez},
+  {S{\'a}nchez-Bl{\'a}zquez}, {Gonz{\'a}lez}, {Ros{\'a}lez-Ortega},
+  {Cano-D{\'\i} az}, {L{\'o}pez-Cob{\'a}}, {Marino}, {Gil de Paz} \&
+  {Moll{\'a}}}{{S{\'a}nchez} et~al.}{2016}]{sanchez16}
+{S{\'a}nchez} S.~F.,  {P{\'e}rez} E.,  {S{\'a}nchez-Bl{\'a}zquez} P.,
+  {Gonz{\'a}lez} J.~J.,  {Ros{\'a}lez-Ortega} F.~F.,  {Cano-D{\'\i} az} M.,
+  {L{\'o}pez-Cob{\'a}} C.,  {Marino} R.~A.,  {Gil de Paz} A.,    {Moll{\'a}}
+  M.,  2016, \rmxaa, 52, 21
+
+\bibitem[\protect\citeauthoryear{{Schawinski}, {Urry}, {Simmons}, {Fortson},
+  {Kaviraj}, {Keel}, {Lintott}, {Masters}, {Nichol}, {Sarzi}, {Skibba},
+  {Treister}, {Willett}, {Wong} \& {Yi}}{{Schawinski}
+  et~al.}{2014}]{schawinski14}
+{Schawinski} K.,  {Urry} C.~M.,  {Simmons} B.~D.,  {Fortson} L.,  {Kaviraj} S.,
+   {Keel} W.~C.,  {Lintott} C.~J.,  {Masters} K.~L.,  {Nichol} R.~C.,  {Sarzi}
+  M.,  {Skibba} R.,  {Treister} E.,  {Willett} K.~W.,  {Wong} O.~I.,    {Yi}
+  S.~K.,  2014, \mnras, 440, 889
+
+\bibitem[\protect\citeauthoryear{{Smethurst}, {Lintott}, {Simmons},
+  {Schawinski}, {Marshall}, {Bamford}, {Fortson}, {Kaviraj}, {Masters},
+  {Melvin}, {Nichol}, {Skibba} \& {Willett}}{{Smethurst}
+  et~al.}{2015}]{smethurst15}
+{Smethurst} R.~J.,  {Lintott} C.~J.,  {Simmons} B.~D.,  {Schawinski} K.,
+  {Marshall} P.~J.,  {Bamford} S.,  {Fortson} L.,  {Kaviraj} S.,  {Masters}
+  K.~L.,  {Melvin} T.,  {Nichol} R.~C.,  {Skibba} R.~A.,    {Willett} K.~W.,
+  2015, \mnras, 450, 435
+
+\bibitem[\protect\citeauthoryear{{Spindler}, {Wake}, {Belfiore}, {Bershady},
+  {Bundy}, {Drory}, {Masters}, {Thomas}, {Westfall} \& {Wild}}{{Spindler}
+  et~al.}{2018}]{spindler18}
+{Spindler} A.,  {Wake} D.,  {Belfiore} F.,  {Bershady} M.,  {Bundy} K.,
+  {Drory} N.,  {Masters} K.,  {Thomas} D.,  {Westfall} K.,    {Wild} V.,  2018,
+  \mnras, 476, 580
+
+\bibitem[\protect\citeauthoryear{{Strauss}, {Weinberg}, {Lupton}, {Narayanan},
+  {Annis}, {Bernardi}, {Blanton}, {Burles}, {Connolly}, {Dalcanton}, {Doi},
+  {Eisenstein} \& {Frieman}}{{Strauss} et~al.}{2002}]{strauss02}
+{Strauss} M.~A.,  {Weinberg} D.~H.,  {Lupton} R.~H.,  {Narayanan} V.~K.,
+  {Annis} J.,  {Bernardi} M.,  {Blanton} M.,  {Burles} S.,  {Connolly} A.~J.,
+  {Dalcanton} J.,  {Doi} M.,  {Eisenstein} D.,    {Frieman} J.~A.,  2002, \aj,
+  124, 1810
+
+\bibitem[\protect\citeauthoryear{{Tojeiro}, {Heavens}, {Jimenez} \&
+  {Panter}}{{Tojeiro} et~al.}{2007}]{tojeiro07}
+{Tojeiro} R.,  {Heavens} A.~F.,  {Jimenez} R.,    {Panter} B.,  2007, \mnras,
+  381, 1252
+
+\bibitem[\protect\citeauthoryear{{Tojeiro}, {Masters}, {Richards}, {Percival},
+  {Bamford}, {Maraston}, {Nichol}, {Skibba} \& {Thomas}}{{Tojeiro}
+  et~al.}{2013}]{tojeiro13}
+{Tojeiro} R.,  {Masters} K.~L.,  {Richards} J.,  {Percival} W.~J.,  {Bamford}
+  S.~P.,  {Maraston} C.,  {Nichol} R.~C.,  {Skibba} R.,    {Thomas} D.,  2013,
+  \mnras, 432, 359
+
+\bibitem[\protect\citeauthoryear{{Trager}, {Worthey}, {Faber}, {Burstein} \&
+  {Gonz{\'a}lez}}{{Trager} et~al.}{1998}]{trager98}
+{Trager} S.~C.,  {Worthey} G.,  {Faber} S.~M.,  {Burstein} D.,
+  {Gonz{\'a}lez} J.~J.,  1998, The Astrophysical Journal Supplement Series,
+  116, 1
+
+\bibitem[\protect\citeauthoryear{{Vazdekis}, {Koleva}, {Ricciardelli},
+  {R{\"o}ck} \& {Falc{\'o}n-Barroso}}{{Vazdekis} et~al.}{2016}]{vazdekis16}
+{Vazdekis} A.,  {Koleva} M.,  {Ricciardelli} E.,  {R{\"o}ck} B.,
+  {Falc{\'o}n-Barroso} J.,  2016, \mnras, 463, 3409
+
+\bibitem[\protect\citeauthoryear{{Wang}, {Li}, {Xiao}, {Lin}, {Bershady},
+  {Law}, {Merrifield}, {Sanchez}, {Riffel}, {Riffel} \& {Yan}}{{Wang}
+  et~al.}{2018}]{wang18}
+{Wang} E.,  {Li} C.,  {Xiao} T.,  {Lin} L.,  {Bershady} M.,  {Law} D.~R.,
+  {Merrifield} M.,  {Sanchez} S.~F.,  {Riffel} R.~A.,  {Riffel} R.,    {Yan}
+  R.,  2018, \apj, 856, 137
+
+\bibitem[\protect\citeauthoryear{{Weiner}, {Willmer}, {Faber}, {Harker},
+  {Kassin}, {Phillips}, {Melbourne}, {Metevier}, {Vogt} \& {Koo}}{{Weiner}
+  et~al.}{2006}]{weiner06}
+{Weiner} B.~J.,  {Willmer} C.~N.~A.,  {Faber} S.~M.,  {Harker} J.,  {Kassin}
+  S.~A.,  {Phillips} A.~C.,  {Melbourne} J.,  {Metevier} A.~J.,  {Vogt} N.~P.,
+    {Koo} D.~C.,  2006, \apj, 653, 1049
+
+\bibitem[\protect\citeauthoryear{{Wilkinson}, {Maraston}, {Goddard}, {Thomas}
+  \& {Parikh}}{{Wilkinson} et~al.}{2017}]{wilkinson17}
+{Wilkinson} D.~M.,  {Maraston} C.,  {Goddard} D.,  {Thomas} D.,    {Parikh} T.,
+   2017, \mnras, 472, 4297
+
+\bibitem[\protect\citeauthoryear{{Worthey}, {Faber}, {Gonzalez} \&
+  {Burstein}}{{Worthey} et~al.}{1994}]{worthey94b}
+{Worthey} G.,  {Faber} S.~M.,  {Gonzalez} J.~J.,    {Burstein} D.,  1994, The
+  Astrophysical Journal Supplement Series, 94, 687
+
+\bibitem[\protect\citeauthoryear{{Zick}, {Kriek}, {Shapley}, {Reddy},
+  {Freeman}, {Siana}, {Coil}, {Azadi}, {Barro}, {Fetherolf}, {Fornasini}, {de
+  Groot}, {Leung}, {Mobasher}, {Price}, {Sanders} \& {Shivaei}}{{Zick}
+  et~al.}{2018}]{zick18}
+{Zick} T.~O.,  {Kriek} M.,  {Shapley} A.~E.,  {Reddy} N.~A.,  {Freeman} W.~R.,
+  {Siana} B.,  {Coil} A.~L.,  {Azadi} M.,  {Barro} G.,  {Fetherolf} T.,
+  {Fornasini} F.~M.,  {de Groot} L.,  {Leung} G.,  {Mobasher} B.,  {Price}
+  S.~H.,  {Sanders} R.~L.,    {Shivaei} I.,  2018, \apj, 867, L16
+
+\end{thebibliography}
